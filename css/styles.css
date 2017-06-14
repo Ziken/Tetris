@@ -1,0 +1,50 @@
+* {
+    box-sizing: border-box;
+}
+.container {
+    width: 1000px;
+    margin: 0 auto;
+    border: 1px solid black;
+}
+
+.game-content {
+    display: flex;
+    flex-wrap: nowrap;
+}
+.screen-container {
+    width:600px;
+    background-color: #eee;
+}
+#screen {
+    width: 580px;
+    height: 600px;
+    display:block;
+    margin: 0 auto;
+    border:1px solid black;
+    background-color: #fefefe;
+}
+.game-informations {
+    background: #aaa;
+    width: 400px;
+}
+.next-block {
+    background-color: #999;
+    padding: 10px;
+}
+#block {
+    width: 300px;
+    display: block;
+    margin: 0 auto;
+    border: 5px solid #333;
+}
+.scoreboard {
+    text-align: center;
+}
+.score-title {
+    font-size: 30px;
+    margin: 10px 0 0 0;
+}
+#score {
+    font-size: 40px;
+    margin: 10px 0 0 0;
+}
