@@ -15,6 +15,9 @@ var TetrisComputing = function ( screenHandler ) {
     };
     let coordElemX = 3,
         coordElemY = 0;
+    let currentElem;
+    let currentIdInterval;
+    let rotateStatus = 0;//0,1,2,3
     /*
         4x4 array to represents different elements
     */
@@ -72,13 +75,9 @@ var TetrisComputing = function ( screenHandler ) {
             }
         }
 
-        let elem = createElement(elements.S[0],"blue");
-        setInterval(()=>{
-            let cpBoard = getCoppyOfArray(board);
-            scaleElemToBoard(cpBoard,elem);
-            drawOnBoard(cpBoard);
-            //coordElemY++;
-        },1000);
+        drawOnScreen(board);
+        window.addEventListener("keyup",workWithKeys,true);
+
     }
     let createElement = ( aof, bgColor ) => { //arary of points
         let elem = [];
@@ -97,7 +96,7 @@ var TetrisComputing = function ( screenHandler ) {
     let getCoppyOfArray = ( arr ) => {
         return JSON.parse(JSON.stringify(arr));
     }
-    let scaleElemToBoard = ( board,elem ) => {
+    let mergeElemToBoard = ( board,elem ) => {
         let borderX = 4,
             borderY = 4;
 
@@ -107,13 +106,58 @@ var TetrisComputing = function ( screenHandler ) {
             }
         }
     }
-    let drawOnBoard = (board) => {
+    let drawOnScreen = (board) => {
         screenHandler.draw(board);
     }
-    /*this.start = () => {
+    let drawElemOnBoard = ( board, type, bgColor ) => {
+        let borderX = (coordElemX + 4) % 10 - coordElemX,
+            borderY = (coordElemY + 4) % 10 - coordElemY;
+        for (let i = 0; i < 4; i++) {
+            let singleSq = board[ coordElemY + type[i][0] ][ coordElemX + type[i][1] ];
+
+            singleSq.isActived = true;
+            singleSq.bgColor = bgColor;
+        }
+    }
+    let refreshScreen = () => {
+        let cpBoard = getCoppyOfArray(board);
+        drawElemOnBoard( cpBoard, currentElem[rotateStatus], "grey");
+        drawOnScreen(cpBoard);
+    }
+    let giveNextElem = () => {
+        let e = ["I", "J", "L", "O", "S", "T", "Z"];
+        //currentElem = elements[ e[ Math.round( Math.random()*6 ) ] ];
+        currentElem = elements[ "Z" ];
+        let elem = createElement(currentElem[rotateStatus],"aqua");
+        currentIdInterval = setInterval( () => {
+            refreshScreen();
+            coordElemY++;
+        },1000);
+
 
     }
-    this.score = () => {
+    let workWithKeys = ( evt ) => {
+        switch ( evt.keyCode ) {
+            case 37: //left arrow
+                coordElemX--;
+                refreshScreen();
+            break;
+            case 38: //up arrow
+
+            break;
+            case 39: //right arrow
+                coordElemX++;
+                refreshScreen();
+            break;
+            case 40: //down arrow
+            break;
+        }
+    }
+    this.start = () => {
+        giveNextElem();
+    }
+
+    /*this.score = () => {
 
     }*/
 
