@@ -21,6 +21,7 @@ var TetrisComputing = function ( screenHandler ) {
     /*
         4x4 array to represents different elements
     */
+    //TODO correct positions of elements
     let elements = {
         I: [
             [[0,1], [1,1], [2,1], [3,1]],
@@ -79,7 +80,7 @@ var TetrisComputing = function ( screenHandler ) {
         window.addEventListener("keyup",workWithKeys,true);
 
     }
-    let createElement = ( aof, bgColor ) => { //arary of points
+    /*let createElement = ( aof, bgColor ) => { //arary of points
         let elem = [];
         for (let y = 0; y < 4 ;y++) {
             elem[y] = [];
@@ -93,9 +94,6 @@ var TetrisComputing = function ( screenHandler ) {
         });
         return elem;
     }
-    let getCoppyOfArray = ( arr ) => {
-        return JSON.parse(JSON.stringify(arr));
-    }
     let mergeElemToBoard = ( board,elem ) => {
         let borderX = 4,
             borderY = 4;
@@ -105,13 +103,14 @@ var TetrisComputing = function ( screenHandler ) {
                 board[ y+coordElemY ][ x+coordElemX ] = elem[y][x];
             }
         }
+    }*/
+    let getCoppyOfArray = ( arr ) => {
+        return JSON.parse(JSON.stringify(arr));
     }
     let drawOnScreen = (board) => {
         screenHandler.draw(board);
     }
     let drawElemOnBoard = ( board, type, bgColor ) => {
-        let borderX = (coordElemX + 4) % 10 - coordElemX,
-            borderY = (coordElemY + 4) % 10 - coordElemY;
         for (let i = 0; i < 4; i++) {
             let singleSq = board[ coordElemY + type[i][0] ][ coordElemX + type[i][1] ];
 
@@ -119,21 +118,40 @@ var TetrisComputing = function ( screenHandler ) {
             singleSq.bgColor = bgColor;
         }
     }
-    let refreshScreen = () => {
+    let refreshScreen = (lockElem) => {
+        lockElem = lockElem || false;
         let cpBoard = getCoppyOfArray(board);
-        drawElemOnBoard( cpBoard, currentElem[rotateStatus], "grey");
+        drawElemOnBoard( cpBoard, currentElem[rotateStatus], "grey", lockElem);
         drawOnScreen(cpBoard);
     }
     let giveNextElem = () => {
         let e = ["I", "J", "L", "O", "S", "T", "Z"];
-        //currentElem = elements[ e[ Math.round( Math.random()*6 ) ] ];
         currentElem = elements[ "Z" ];
-        let elem = createElement(currentElem[rotateStatus],"aqua");
         currentIdInterval = setInterval( () => {
             refreshScreen();
-            coordElemY++;
+            moveElemDown();
         },1000);
 
+    }
+    let rotateElem = () => {
+        rotateStatus++;
+        if ( rotateStatus > 3 )
+            rotateStatus = 0;
+    }
+    let moveElemDown = () => {
+        let nextY = coordElemY+1;
+        let highestY = 0;
+        let elem = currentElem[rotateStatus];
+        for (let i = 0; i < 4; i++) {
+            if ( highestY < elem[i][0] ) highestY = elem[i][0];
+        }
+        highestY+=coordElemY;
+        console.log(highestY);
+        if ( highestY >= SIZE_Y-1 ) {
+            //lock this element
+        } else {
+            coordElemY++;
+        }
 
     }
     let workWithKeys = ( evt ) => {
@@ -143,13 +161,16 @@ var TetrisComputing = function ( screenHandler ) {
                 refreshScreen();
             break;
             case 38: //up arrow
-
+                rotateElem();
+                refreshScreen();
             break;
             case 39: //right arrow
                 coordElemX++;
                 refreshScreen();
             break;
             case 40: //down arrow
+                moveElemDown();
+                refreshScreen();
             break;
         }
     }
