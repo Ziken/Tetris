@@ -19,7 +19,7 @@ var CanvasScreen = function ( canvasElem ) {
     }
     let setBgSquare = ( obj ) => {
         let bg;
-        if ( obj.isFilled ) {
+        if ( obj.isActived ) {
             bg = obj.bgColor;
         } else {
             bg = "white";
@@ -36,6 +36,7 @@ var CanvasScreen = function ( canvasElem ) {
         array.forEach( (v) => {
 
             v.forEach( (sq) => {
+                //console.log(sq);
                 drawSingleSquare(sq);
                 currentX += SIZE;
             });
