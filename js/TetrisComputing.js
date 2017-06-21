@@ -21,7 +21,6 @@ var TetrisComputing = function ( screenHandler ) {
     /*
         4x4 array to represents different elements
     */
-    //TODO correct positions of elements
     let elements = {
         I: [
             [[0,1], [1,1], [2,1], [3,1]],
@@ -132,7 +131,7 @@ var TetrisComputing = function ( screenHandler ) {
     }
     let giveNextElem = () => {
         let e = ["I", "J", "L", "O", "S", "T", "Z"];
-        currentElem = elements[ "Z" ];
+        currentElem = elements[ "S" ];
         currentIdInterval = setInterval( () => {
             refreshScreen();
             moveElemDown();
@@ -152,18 +151,40 @@ var TetrisComputing = function ( screenHandler ) {
             if ( highestY < elem[i][0] ) highestY = elem[i][0];
         }
         highestY+=coordElemY;
-        console.log(highestY);
         if ( highestY >= SIZE_Y-1 ) {
             //lock this element
         } else {
             coordElemY++;
         }
+    }
+    let moveElemLeft = () => {
+        let prevX = coordElemX-1;
+        let lowestX = SIZE_X;
+        let elem = currentElem[rotateStatus];
+        for (let i = 0; i < 4; i++) {
+            if ( lowestX > elem[i][1] ) lowestX = elem[i][1];
+        }
+        if ( lowestX == 0 && coordElemX > 0) {
+            coordElemX--;
+        } else if(lowestX == 1 && coordElemX >= 0) {
+            coordElemX--;
+        }
 
+    }
+    let moveElemRight = () => {
+        let nextX = coordElemX+1;
+        let highestX = 0;
+        let elem = currentElem[rotateStatus];
+        for (let i = 0; i<4; i++) {
+            if( highestX < elem[i][1] ) highestX = elem[i][1];
+        }
+        highestX +=coordElemX;
+        if (highestX < SIZE_X - 1) coordElemX++;
     }
     let workWithKeys = ( evt ) => {
         switch ( evt.keyCode ) {
             case 37: //left arrow
-                coordElemX--;
+                moveElemLeft();
                 refreshScreen();
             break;
             case 38: //up arrow
@@ -171,7 +192,7 @@ var TetrisComputing = function ( screenHandler ) {
                 refreshScreen();
             break;
             case 39: //right arrow
-                coordElemX++;
+                moveElemRight();
                 refreshScreen();
             break;
             case 40: //down arrow
