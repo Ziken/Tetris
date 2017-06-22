@@ -110,26 +110,34 @@ var TetrisComputing = function ( screenHandler ) {
         }
     }*/
     let getCoppyOfArray = ( arr ) => {
-        return JSON.parse(JSON.stringify(arr));
+        return JSON.parse(JSON.stringify( arr ));
     }
     let drawOnScreen = (board) => {
         screenHandler.draw(board);
     }
-    let drawElemOnBoard = ( board, type, bgColor ) => {
+    let drawElemOnBoard = ( board, type, bgColor, lockElem ) => {
+        lockElem = lockElem || false;
+
+        let activ = true;
+        if ( lockElem ) activ = false;
         for (let i = 0; i < 4; i++) {
             let singleSq = board[ coordElemY + type[i][0] ][ coordElemX + type[i][1] ];
 
-            singleSq.isActived = true;
+            singleSq.isActived = activ;
+            singleSq.isLocked = lockElem;
             singleSq.bgColor = bgColor;
         }
     }
     let refreshScreen = (lockElem) => {
         lockElem = lockElem || false;
-        let cpBoard = getCoppyOfArray(board);
+        let cpBoard = lockElem ? board : getCoppyOfArray(board);
         drawElemOnBoard( cpBoard, currentElem[rotateStatus], "grey", lockElem);
         drawOnScreen(cpBoard);
     }
     let giveNextElem = () => {
+        clearInterval(currentIdInterval);
+        coordElemX = 3,
+        coordElemY = 0;
         let e = ["I", "J", "L", "O", "S", "T", "Z"];
         currentElem = elements[ "S" ];
         currentIdInterval = setInterval( () => {
@@ -144,21 +152,31 @@ var TetrisComputing = function ( screenHandler ) {
             rotateStatus = 0;
     }
     let moveElemDown = () => {
-        let nextY = coordElemY+1;
+        /*let nextY = coordElemY+1;
         let highestY = 0;
         let elem = currentElem[rotateStatus];
+        //let touchedElem = false;
         for (let i = 0; i < 4; i++) {
             if ( highestY < elem[i][0] ) highestY = elem[i][0];
         }
         highestY+=coordElemY;
-        if ( highestY >= SIZE_Y-1 ) {
-            //lock this element
+        console.log(canMoveElem());
+        if ( highestY >= SIZE_Y-1 ) {*/
+        //I suppose it can moves if doesn't, back previous value
+        coordElemY++;
+        if ( !canMoveElem() ) {
+        coordElemY--;
+            //TODO LOCK ELEMENT
+            //setTimeout(()=>{
+                refreshScreen(true);
+                giveNextElem();
+            //},500);
         } else {
-            coordElemY++;
+            //coordElemY++;
         }
     }
     let moveElemLeft = () => {
-        let prevX = coordElemX-1;
+        /*let prevX = coordElemX-1;
         let lowestX = SIZE_X;
         let elem = currentElem[rotateStatus];
         for (let i = 0; i < 4; i++) {
@@ -168,18 +186,34 @@ var TetrisComputing = function ( screenHandler ) {
             coordElemX--;
         } else if(lowestX == 1 && coordElemX >= 0) {
             coordElemX--;
-        }
-
+        }*/
+        //I suppose it can moves if doesn't, back previous value
+        coordElemX--;
+        if ( !canMoveElem() ) coordElemX++;
     }
     let moveElemRight = () => {
-        let nextX = coordElemX+1;
+        /*let nextX = coordElemX+1;
         let highestX = 0;
         let elem = currentElem[rotateStatus];
         for (let i = 0; i<4; i++) {
             if( highestX < elem[i][1] ) highestX = elem[i][1];
         }
         highestX +=coordElemX;
-        if (highestX < SIZE_X - 1) coordElemX++;
+        if (highestX < SIZE_X - 1) coordElemX++;*/
+        //I suppose it can moves if doesn't, back previous value
+        coordElemX++;
+        if ( !canMoveElem() )coordElemX--;
+    }
+    let canMoveElem = () => {
+        let elem = currentElem[rotateStatus],
+            x=0,
+            y=0;
+        for (let i = 0; i < 4; i++) {
+            [ x,y ] = [ elem[i][1]+coordElemX, elem[i][0]+coordElemY ];
+            if ( (x<0&&x>SIZE_X-1) || y>SIZE_Y-1) return false;
+            if ( board[y][x] == undefined || board[y][x].isLocked ) return false;
+        }
+        return true;
     }
     let workWithKeys = ( evt ) => {
         switch ( evt.keyCode ) {
