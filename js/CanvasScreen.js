@@ -19,7 +19,7 @@ var CanvasScreen = function ( canvasElem ) {
     }
     let setBgSquare = ( obj ) => {
         let bg;
-        if ( obj.isActived ) {
+        if ( obj.isActived || obj.isLocked) {
             bg = obj.bgColor;
         } else {
             bg = "white";
