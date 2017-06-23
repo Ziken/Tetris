@@ -21,14 +21,14 @@ var TetrisComputing = function ( screenHandler ) {
     /*
         4x4 array to represents different elements
     */
-    let elements = {
+    const ELEMENTS = {
         I: [
             [[0,1], [1,1], [2,1], [3,1]],
             [[1,0], [1,1], [1,2], [1,3]],
-            [[0,1], [1,1], [2,1], [3,1]],
-            [[1,0], [1,1], [1,2], [1,3]]
-            //[[0,2], [1,2], [2,2], [3,2]],
-            //[[2,0], [2,1], [2,2], [2,3]]
+            //[[0,1], [1,1], [2,1], [3,1]],
+            //[[1,0], [1,1], [1,2], [1,3]]
+            [[0,2], [1,2], [2,2], [3,2]],
+            [[2,0], [2,1], [2,2], [2,3]]
         ],
         J: [
             [[0,1], [1,1], [2,1], [2,0]],
@@ -49,12 +49,12 @@ var TetrisComputing = function ( screenHandler ) {
             [[0,0], [1,0], [1,1], [0,1]]
         ],
         S: [
-            //[[2,0], [2,1], [1,1], [1,2]],
-            [[1,0], [1,1], [0,1], [0,2]],
+            [[2,0], [2,1], [1,1], [1,2]],
+            //[[1,0], [1,1], [0,1], [0,2]],
             [[0,0], [1,0], [1,1], [2,1]],
             [[1,0], [1,1], [0,1], [0,2]],
-            [[0,0], [1,0], [1,1], [2,1]],
-            //[[0,1], [1,1], [1,2], [2,2]]
+            //[[0,0], [1,0], [1,1], [2,1]],
+            [[0,1], [1,1], [1,2], [2,2]]
         ],
         T: [
             [[0,1], [1,1], [1,2], [1,0]],
@@ -63,27 +63,30 @@ var TetrisComputing = function ( screenHandler ) {
             [[1,0], [0,1], [1,1], [2,1]]
         ],
         Z: [
-            //[[1,0], [1,1], [2,1], [2,2]],
-            [[0,0], [0,1], [1,1], [1,2]],
+            [[1,0], [1,1], [2,1], [2,2]],
+            //[[0,0], [0,1], [1,1], [1,2]],
             [[0,1], [1,1], [1,0], [2,0]],
             [[0,0], [0,1], [1,1], [1,2]],
-            [[0,1], [1,1], [1,0], [2,0]],
-            //[[0,2], [1,2], [1,1], [2,1]]
+            //[[0,1], [1,1], [1,0], [2,0]],
+            [[0,2], [1,2], [1,1], [2,1]]
         ]
     }
 
     let init = () => {
-
-        for (let y = 0; y < SIZE_Y ;y++) {
-            board[y] = [];
-            for (let x = 0; x < SIZE_X ;x++) {
-                board[y][x] = new clearSquare();
-            }
-        }
-
+        createEmptyBoard(board);
         drawOnScreen(board);
         window.addEventListener("keyup",workWithKeys,true);
 
+    }
+    createEmptyBoard = (brd) => {
+        brd = brd || [];
+        for (let y = 0; y < SIZE_Y ;y++) {
+            brd[y] = [];
+            for (let x = 0; x < SIZE_X ;x++) {
+                brd[y][x] = new clearSquare();
+            }
+        }
+        return brd;
     }
     /*let createElement = ( aof, bgColor ) => { //arary of points
         let elem = [];
@@ -139,17 +142,41 @@ var TetrisComputing = function ( screenHandler ) {
         coordElemX = 3,
         coordElemY = 0;
         let e = ["I", "J", "L", "O", "S", "T", "Z"];
-        currentElem = elements[ "S" ];
+        //currentElem = ELEMENTS[ e[Math.floor(Math.random()*e.length)] ];
+        checkAndRemoveProperLine();
+        currentElem = ELEMENTS["I"];
         currentIdInterval = setInterval( () => {
             refreshScreen();
             moveElemDown();
         },1000);
 
     }
+    let checkAndRemoveProperLine = () => {
+        let ifRemove = true;
+        let newBoard;
+        let addedLines = 0;
+        newBoard = createEmptyBoard(newBoard);
+
+        for (let y = SIZE_Y-1; y >= 0; y--) {
+            ifRemove = true;
+            for (let x = 0; x < SIZE_X; x++) {
+                if ( !board[y][x].isLocked ) ifRemove = false;
+            }
+            if ( !ifRemove ) {
+                newBoard[SIZE_Y-1-addedLines] = board[y];
+                addedLines++;
+            } else {
+                //TODO Score here
+            }
+        }
+        board = newBoard;
+        drawOnScreen(board);
+    }
     let rotateElem = () => {
         rotateStatus++;
         if ( rotateStatus > 3 )
             rotateStatus = 0;
+        if( !canMoveElem() ) rotateStatus = (rotateStatus==0?3:rotateStatus-1);
     }
     let moveElemDown = () => {
         /*let nextY = coordElemY+1;
@@ -171,8 +198,6 @@ var TetrisComputing = function ( screenHandler ) {
                 refreshScreen(true);
                 giveNextElem();
             //},500);
-        } else {
-            //coordElemY++;
         }
     }
     let moveElemLeft = () => {
@@ -210,8 +235,8 @@ var TetrisComputing = function ( screenHandler ) {
             y=0;
         for (let i = 0; i < 4; i++) {
             [ x,y ] = [ elem[i][1]+coordElemX, elem[i][0]+coordElemY ];
-            if ( (x<0&&x>SIZE_X-1) || y>SIZE_Y-1) return false;
-            if ( board[y][x] == undefined || board[y][x].isLocked ) return false;
+
+            if ( ( x < 0 && x > SIZE_X-1 ) || y>SIZE_Y-1 || board[y][x] == undefined || board[y][x].isLocked ) return false;
         }
         return true;
     }
