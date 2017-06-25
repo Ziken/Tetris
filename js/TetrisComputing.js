@@ -9,8 +9,8 @@ var TetrisComputing = function ( screenHandler, scoreCallback ) {
           SIZE_Y = 15;
     //TODO correct it
     let board = [];
-    let clearSquare = function(){
-        this.bgColor =      "";   // backgorund of block
+    let clearSquare = function () {
+        this.bgColor =    "";   // backgorund of block
         this.isLocked =   false;  // if it can moves
         this.isActived =  false;  // if it is moving
     };
@@ -19,6 +19,7 @@ var TetrisComputing = function ( screenHandler, scoreCallback ) {
     let currentElem;
     let currentIdInterval;
     let rotateStatus = 0;//0,1,2,3
+    let disableMoving = false;
     /*
         4x4 array to represents different elements
     */
@@ -70,6 +71,12 @@ var TetrisComputing = function ( screenHandler, scoreCallback ) {
             [[0,0], [0,1], [1,1], [1,2]],
             //[[0,1], [1,1], [1,0], [2,0]],
             [[0,2], [1,2], [1,1], [2,1]]
+        ],
+        empty: [
+            [[0,0], [0,0], [0,0], [0,0]],
+            [[0,0], [0,0], [0,0], [0,0]],
+            [[0,0], [0,0], [0,0], [0,0]],
+            [[0,0], [0,0], [0,0], [0,0]]
         ]
     }
 
@@ -113,10 +120,33 @@ var TetrisComputing = function ( screenHandler, scoreCallback ) {
         drawElemOnBoard( cpBoard, currentElem[rotateStatus], "grey", lockElem);
         drawOnScreen(cpBoard);
     }
+    let endGame = () => {
+        currentElem = ELEMENTS["empty"];
+        disableMoving = true;
+        coordElemX = 0;
+        coordElemY = 0;
+        let fillBoard = () => {
+            console.log("here");
+            refreshScreen(true);
+            coordElemX++;
+            if ( coordElemX == SIZE_X ) {
+                coordElemY++;
+                coordElemX = 0;
+            }
+            if ( coordElemY < SIZE_Y ) {
+                window.requestAnimationFrame(fillBoard);
+            } else {
+                //TODO show something like text
+                screenHandler.drawText("Game Over", "#ffffff", "#FF0000" , 60);
+            }
+        }
+        fillBoard();
+    }
     let giveNextElem = () => {
         clearInterval(currentIdInterval);
         if ( checkIfPlayerLost() ) {
-            //TODO do sth if player lost game!
+            endGame();
+            return true;//don't execute rest of the code
         }
         coordElemX = 3,
         coordElemY = 0,
@@ -188,7 +218,7 @@ var TetrisComputing = function ( screenHandler, scoreCallback ) {
     let moveElemRight = () => {
         //I suppose it can moves if doesn't, back previous value
         coordElemX++;
-        if ( !canMoveElem() )coordElemX--;
+        if ( !canMoveElem() ) coordElemX--;
     }
     let canMoveElem = () => {
         let elem = currentElem[rotateStatus],
@@ -203,6 +233,7 @@ var TetrisComputing = function ( screenHandler, scoreCallback ) {
         return true;
     }
     let workWithKeys = ( evt ) => {
+        if ( disableMoving ) return false;
         switch ( evt.keyCode ) {
             case 37: //left arrow
                 moveElemLeft();

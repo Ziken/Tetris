@@ -16,8 +16,8 @@
     background-color: #eee;
 }
 #screen {
-    width: 580px;
-    height: 600px;
+    /*width: 580px;
+    height: 600px;*/
     display:block;
     margin: 0 auto;
     border:1px solid black;
