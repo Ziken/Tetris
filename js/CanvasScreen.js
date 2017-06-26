@@ -3,12 +3,13 @@
  * @param {object} canvasElem handler of canvas
 */
 var CanvasScreen = function ( canvasElem ) {
+    "use strict";
     const SIZE = 40; //size of square
     let ctx = canvasElem.getContext( "2d" ),
         currentX = 0,
         currentY = 0;
 
-    let = drawSingleSquare = ( obj ) => {
+    let drawSingleSquare = ( obj ) => {
         ctx.beginPath();
         ctx.moveTo( currentX, currentY );
         ctx.rect( currentX,currentY,SIZE,SIZE );

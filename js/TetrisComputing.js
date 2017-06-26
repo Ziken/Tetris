@@ -3,7 +3,7 @@
     Class for preparing whole stuff like array and work on it.
     @param {object} elem handler of canvas
 */
-var TetrisComputing = function ( screenHandler, scoreCallback ) {
+var TetrisComputing = function ( screenHandler, scoreHandler ) {
     "use strict";
     const SIZE_X = 10,
           SIZE_Y = 15;
@@ -180,7 +180,9 @@ var TetrisComputing = function ( screenHandler, scoreCallback ) {
             }
         }
         //score
-        //scoreCallback(SIZE_Y)
+        if ( (SIZE_Y-addedLines)>0 ) {
+            scoreHandler.computeScore(SIZE_Y-addedLines);
+        }
 
         board = newBoard;
         drawOnScreen(board);
