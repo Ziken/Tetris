@@ -27,12 +27,13 @@
     background: #aaa;
     width: 400px;
 }
-.next-block {
+.next-piece {
     background-color: #999;
     padding: 10px;
 }
-#block {
-    width: 300px;
+#piece {
+    width: 160px;
+    height: 160px;
     display: block;
     margin: 0 auto;
     border: 5px solid #333;

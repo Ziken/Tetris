@@ -3,12 +3,13 @@
     Class for preparing whole stuff like array and work on it.
     @param {object} elem handler of canvas
 */
-var TetrisComputing = function ( screenHandler, scoreHandler ) {
+var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
     "use strict";
     const SIZE_X = 10,
           SIZE_Y = 15;
     //TODO correct it
     let board = [];
+    let nextElemBoard = [];
     let clearSquare = function () {
         this.bgColor =    "";   // backgorund of block
         this.isLocked =   false;  // if it can moves
@@ -17,6 +18,7 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
     let coordElemX = 3,
         coordElemY = 0;
     let currentElem;
+    let nextElem;
     let currentIdInterval;
     let rotateStatus = 0;//0,1,2,3
     let disableMoving = false;
@@ -81,15 +83,17 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
     }
 
     let init = () => {
-        createEmptyBoard(board);
+        createEmptyBoard(board, SIZE_Y, SIZE_X);
         drawOnScreen(board);
+        nextElem = getRandomElem();
         window.addEventListener("keyup",workWithKeys,true);
+
     }
-    let createEmptyBoard = (brd) => {
+    let createEmptyBoard = ( brd, rows, cols ) => {
         brd = brd || [];
-        for (let y = 0; y < SIZE_Y ;y++) {
+        for (let y = 0; y < rows ;y++) {
             brd[y] = [];
-            for (let x = 0; x < SIZE_X ;x++) {
+            for (let x = 0; x < cols ;x++) {
                 brd[y][x] = new clearSquare();
             }
         }
@@ -101,13 +105,13 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
     let drawOnScreen = (board) => {
         screenHandler.draw(board);
     }
-    let drawElemOnBoard = ( board, type, bgColor, lockElem ) => {
+    let drawElemOnBoard = ( board, type, bgColor, lockElem, coordX, coordY ) => {
         lockElem = lockElem || false;
 
         let activ = true;
         if ( lockElem ) activ = false;
         for (let i = 0; i < 4; i++) {
-            let singleSq = board[ coordElemY + type[i][0] ][ coordElemX + type[i][1] ];
+            let singleSq = board[ coordY + type[i][0] ][ coordX + type[i][1] ];
 
             singleSq.isActived = activ;
             singleSq.isLocked = lockElem;
@@ -117,7 +121,7 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
     let refreshScreen = (lockElem) => {
         lockElem = lockElem || false;
         let cpBoard = lockElem ? board : getCoppyOfArray(board);
-        drawElemOnBoard( cpBoard, currentElem[rotateStatus], "grey", lockElem);
+        drawElemOnBoard( cpBoard, currentElem[rotateStatus], "grey", lockElem, coordElemX, coordElemY);
         drawOnScreen(cpBoard);
     }
     let endGame = () => {
@@ -126,7 +130,6 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
         coordElemX = 0;
         coordElemY = 0;
         let fillBoard = () => {
-            console.log("here");
             refreshScreen(true);
             coordElemX++;
             if ( coordElemX == SIZE_X ) {
@@ -142,6 +145,13 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
         }
         fillBoard();
     }
+    let getRandomElem = () => {
+        let e = ["I", "J", "L", "O", "S", "T", "Z"];
+        let re = e[Math.floor(Math.random()*e.length)];
+
+        return (ELEMENTS[ re ]);
+
+    }
     let giveNextElem = () => {
         clearInterval(currentIdInterval);
         if ( checkIfPlayerLost() ) {
@@ -152,9 +162,12 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
         coordElemY = 0,
         rotateStatus = 0;
 
-        let e = ["I", "J", "L", "O", "S", "T", "Z"];
-        //currentElem = ELEMENTS[ e[Math.floor(Math.random()*e.length)] ];
-        currentElem = ELEMENTS["J"];
+        currentElem = getCoppyOfArray(nextElem);
+        nextElem = getRandomElem();
+
+        createEmptyBoard(nextElemBoard, 4,4);
+        drawElemOnBoard(nextElemBoard, nextElem[0],"red",true,0,0);
+        nextItemScreen.draw(nextElemBoard);
         checkAndRemoveProperLine();
 
         currentIdInterval = setInterval( () => {
@@ -167,7 +180,7 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
         let ifRemove = true;
         let newBoard;
         let addedLines = 0;
-        newBoard = createEmptyBoard(newBoard);
+        newBoard = createEmptyBoard(newBoard, SIZE_Y, SIZE_X);
 
         for (let y = SIZE_Y-1; y >= 0; y--) {
             ifRemove = true;
@@ -179,7 +192,7 @@ var TetrisComputing = function ( screenHandler, scoreHandler ) {
                 addedLines++;
             }
         }
-        //score
+        //SCORE
         if ( (SIZE_Y-addedLines)>0 ) {
             scoreHandler.computeScore(SIZE_Y-addedLines);
         }
