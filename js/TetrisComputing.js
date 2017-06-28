@@ -5,23 +5,29 @@
 */
 var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
     "use strict";
+    //size of board
     const SIZE_X = 10,
           SIZE_Y = 15;
-    //TODO correct it
-    let board = [];
-    let nextElemBoard = [];
-    let clearSquare = function () {
-        this.bgColor =    "";   // backgorund of block
-        this.isLocked =   false;  // if it can moves
-        this.isActived =  false;  // if it is moving
-    };
-    let coordElemX = 3,
-        coordElemY = 0;
-    let currentElem;
-    let nextElem;
-    let currentIdInterval;
-    let rotateStatus = 0;//0,1,2,3
-    let disableMoving = false;
+    const COLORS = [
+        //"#fe7d15","#9c3821","#538c19","#0c92b8","#f44336","#ffeb3b","#8bc34a"
+        "#fe2712", "#8601af", "#0247fe", "#66b032", "#d0ea2b", "#fb9902"
+    ];
+    let board = [],
+        nextElemBoard = [],
+        clearSquare = function () {
+            this.bgColor =    "";   // backgorund of block
+            this.isLocked =   false;  // if it can moves
+            this.isActived =  false;  // if it is moving
+        },
+        coordElemX = 3,
+        coordElemY = 0,
+        currentElem,
+        currentElemColor,
+        nextElem,
+        nextElemColor,
+        currentIdInterval,
+        rotateStatus = 0, //0,1,2,3
+        disableMoving = false;
     /*
         4x4 array to represents different elements
     */
@@ -86,6 +92,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
         createEmptyBoard(board, SIZE_Y, SIZE_X);
         drawOnScreen(board);
         nextElem = getRandomElem();
+        nextElemColor = getRandomColor();
         window.addEventListener("keyup",workWithKeys,true);
 
     }
@@ -102,8 +109,8 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
     let getCoppyOfArray = ( arr ) => {
         return JSON.parse(JSON.stringify( arr ));
     }
-    let drawOnScreen = (board) => {
-        screenHandler.draw(board);
+    let drawOnScreen = ( board ) => {
+        screenHandler.draw( board );
     }
     let drawElemOnBoard = ( board, type, bgColor, lockElem, coordX, coordY ) => {
         lockElem = lockElem || false;
@@ -118,42 +125,50 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
             singleSq.bgColor = bgColor;
         }
     }
-    let refreshScreen = (lockElem) => {
+    let refreshScreen = ( lockElem ) => {
         lockElem = lockElem || false;
         let cpBoard = lockElem ? board : getCoppyOfArray(board);
-        drawElemOnBoard( cpBoard, currentElem[rotateStatus], "grey", lockElem, coordElemX, coordElemY);
-        drawOnScreen(cpBoard);
+        drawElemOnBoard( cpBoard, currentElem[rotateStatus], currentElemColor, lockElem, coordElemX, coordElemY );
+        drawOnScreen( cpBoard );
     }
     let endGame = () => {
         currentElem = ELEMENTS["empty"];
+        currentElemColor = "#134bc6";
         disableMoving = true;
         coordElemX = 0;
         coordElemY = 0;
         let fillBoard = () => {
-            refreshScreen(true);
+            refreshScreen( true );
             coordElemX++;
             if ( coordElemX == SIZE_X ) {
                 coordElemY++;
                 coordElemX = 0;
             }
             if ( coordElemY < SIZE_Y ) {
-                window.requestAnimationFrame(fillBoard);
+                window.requestAnimationFrame( fillBoard );
             } else {
                 //TODO show something like text
-                screenHandler.drawText("Game Over", "#ffffff", "#FF0000" , 60);
+                screenHandler.drawText( "Game Over", "#ffffff", "#FF0000" , 60 );
             }
         }
         fillBoard();
     }
     let getRandomElem = () => {
         let e = ["I", "J", "L", "O", "S", "T", "Z"];
-        let re = e[Math.floor(Math.random()*e.length)];
+        let re = e[ Math.floor(Math.random()*e.length) ];
 
-        return (ELEMENTS[ re ]);
+        return ELEMENTS[ re ];
+    }
+    let getRandomColor = () => {
+        let color;
+        do {
+            color = COLORS[ Math.floor( Math.random()*COLORS.length ) ];
+        } while(color == nextElemColor);
 
+        return color;
     }
     let giveNextElem = () => {
-        clearInterval(currentIdInterval);
+        clearInterval( currentIdInterval );
         if ( checkIfPlayerLost() ) {
             endGame();
             return true;//don't execute rest of the code
@@ -162,24 +177,25 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
         coordElemY = 0,
         rotateStatus = 0;
 
-        currentElem = getCoppyOfArray(nextElem);
+        currentElem = getCoppyOfArray( nextElem );
+        currentElemColor = nextElemColor;
         nextElem = getRandomElem();
+        nextElemColor = getRandomColor();
 
-        createEmptyBoard(nextElemBoard, 4,4);
-        drawElemOnBoard(nextElemBoard, nextElem[0],"red",true,0,0);
-        nextItemScreen.draw(nextElemBoard);
+        createEmptyBoard( nextElemBoard, 4,4 );
+        drawElemOnBoard( nextElemBoard, nextElem[0], nextElemColor ,true,0,0 );
+        nextItemScreen.draw( nextElemBoard );
         checkAndRemoveProperLine();
 
         currentIdInterval = setInterval( () => {
-            //refreshScreen();
             moveElemDown();
         },1000);
 
     }
     let checkAndRemoveProperLine = () => {
-        let ifRemove = true;
-        let newBoard;
-        let addedLines = 0;
+        let ifRemove = true,
+            newBoard,
+            addedLines = 0;
         newBoard = createEmptyBoard(newBoard, SIZE_Y, SIZE_X);
 
         for (let y = SIZE_Y-1; y >= 0; y--) {
@@ -188,17 +204,17 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
                 if ( !board[y][x].isLocked ) ifRemove = false;
             }
             if ( !ifRemove ) {
-                newBoard[SIZE_Y-1-addedLines] = board[y];
+                newBoard[ SIZE_Y-1-addedLines ] = board[y];
                 addedLines++;
             }
         }
         //SCORE
-        if ( (SIZE_Y-addedLines)>0 ) {
-            scoreHandler.computeScore(SIZE_Y-addedLines);
+        if ( (SIZE_Y-addedLines) > 0 ) {
+            scoreHandler.computeScore( SIZE_Y-addedLines );
         }
 
         board = newBoard;
-        drawOnScreen(board);
+        drawOnScreen( board );
     }
     let checkIfPlayerLost = () => {
         let y = 0,
@@ -221,7 +237,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
         if ( !canMoveElem() ) {
             coordElemY--;
             //LOCK ELEMENT
-            refreshScreen(true);
+            refreshScreen( true );
             giveNextElem();
         }
     }
@@ -268,11 +284,6 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
     this.start = () => {
         giveNextElem();
     }
-
-    /*this.score = () => {
-
-    }*/
-
     return init();
 
 }
