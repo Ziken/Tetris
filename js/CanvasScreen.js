@@ -8,20 +8,29 @@ var CanvasScreen = function ( canvasElem ) {
     let ctx = canvasElem.getContext( "2d" ),
         currentX = 0,
         currentY = 0;
-
+    let init = () => {
+        ctx.fillStyle = "white";
+        ctx.fillRect( 0, 0, canvasElem.width, canvasElem.height );
+    }
     let drawSingleSquare = ( obj ) => {
         ctx.beginPath();
-        ctx.moveTo( currentX, currentY );
-        ctx.rect( currentX,currentY,SIZE,SIZE );
-
+        ctx.strokeStyle = "#333";
+        roundedRect(currentX,currentY);
         setBgSquare( obj );
         ctx.fill();
-        ctx.stroke();//TODO delete
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.strokeStyle = "#aaa";
+        dashed(currentX/40,currentY/40,40);
+        ctx.stroke();
+        ctx.closePath();
+        //ctx.stroke();//TODO delete
     }
     let setBgSquare = ( obj ) => {
         let bg;
         if ( obj.isActived || obj.isLocked) {
             bg = obj.bgColor;
+            ctx.stroke();
         } else {
             bg = "white";
         }
@@ -34,6 +43,8 @@ var CanvasScreen = function ( canvasElem ) {
     this.draw = function ( array ) {
         currentX = 0,
         currentY = 0;
+        ctx.fillStyle = "white";
+        ctx.fillRect( 0, 0, canvasElem.width, canvasElem.height );
         array.forEach( (v) => {
 
             v.forEach( (sq) => {
@@ -64,4 +75,32 @@ var CanvasScreen = function ( canvasElem ) {
         ctx.strokeText(text, canvasElem.width/2, canvasElem.height/2);
 
     }
+
+    let roundedRect = (x,y) => {
+
+        ctx.moveTo( x + 10, y );
+        ctx.lineTo( x + 30, y );
+        ctx.quadraticCurveTo( x + 40, y, x + 40, y + 10 );
+        ctx.lineTo( x + 40, y + 30 );
+        ctx.quadraticCurveTo( x + 40, y + 40, x + 30, y + 40 );
+        ctx.lineTo( x + 10, y + 40 );
+        ctx.quadraticCurveTo( x, y + 40, x, y + 30 );
+        ctx.lineTo( x + 0, y + 10 );
+        ctx.quadraticCurveTo( x ,y ,x + 10, y );
+
+    }
+    function dashed(x,y,size){
+
+        ctx.moveTo(x*size+10,y*size+0);
+        ctx.lineTo(x*size+30,y*size+0);
+        ctx.moveTo(x*size+40,y*size+10);
+        ctx.lineTo(x*size+40,y*size+30);
+        ctx.moveTo(x*size+30,y*size+40);
+        ctx.lineTo(x*size+10,y*size+40);
+        ctx.moveTo(x*size+0,y*size+30);
+        ctx.lineTo(x*size+0,y*size+10);
+        ctx.moveTo(x*size+10,y*size+0);
+
+    }
+    return init();
 }
