@@ -4,12 +4,9 @@
     let scoreElem = document.querySelector("#score");
     let addedScore = document.querySelector("#addedScore");
     let nextPieceHandler = document.querySelector("#piece");
-    screenHandler.width = 400;
-    screenHandler.height = 600;
-    nextPieceHandler.width = 160;
-    nextPieceHandler.height = 160;
-    let mainScreen = new CanvasScreen(screenHandler);
-    let nextItemScreen = new CanvasScreen(nextPieceHandler);
+
+    let mainScreen = new CanvasScreen(screenHandler, 10,15);
+    let nextItemScreen = new CanvasScreen(nextPieceHandler,4,4);
     let scoreHandler = new Score(scoreElem, addedScore);
     let game = new TetrisComputing(mainScreen, nextItemScreen, scoreHandler);
     game.start();

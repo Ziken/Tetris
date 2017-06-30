@@ -6,8 +6,7 @@
 var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
     "use strict";
     //size of board
-    const SIZE_X = 10,
-          SIZE_Y = 15;
+    const [SIZE_X,SIZE_Y] = screenHandler.getDimensions();
     const COLORS = [
         //"#fe7d15","#9c3821","#538c19","#0c92b8","#f44336","#ffeb3b","#8bc34a"
         "#fe2712", "#8601af", "#0247fe", "#66b032", "#d0ea2b", "#fb9902"
@@ -187,6 +186,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
         nextItemScreen.draw( nextElemBoard );
         checkAndRemoveProperLine();
 
+        refreshScreen();
         currentIdInterval = setInterval( () => {
             moveElemDown();
         },1000);

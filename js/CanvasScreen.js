@@ -2,15 +2,21 @@
  * Class for drawing elements in canvas
  * @param {object} canvasElem handler of canvas
 */
-var CanvasScreen = function ( canvasElem ) {
+var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     "use strict";
     const SIZE = 40; //size of square
     let ctx = canvasElem.getContext( "2d" ),
         currentX = 0,
         currentY = 0;
+
+
     let init = () => {
+        let w = sizeX * SIZE,
+            h = sizeY * SIZE;
+        canvasElem.width = w;
+        canvasElem.height = h;
         ctx.fillStyle = "white";
-        ctx.fillRect( 0, 0, canvasElem.width, canvasElem.height );
+        ctx.fillRect( 0, 0, w, h );
     }
     let drawSingleSquare = ( obj ) => {
         ctx.beginPath();
@@ -19,9 +25,10 @@ var CanvasScreen = function ( canvasElem ) {
         setBgSquare( obj );
         ctx.fill();
         ctx.closePath();
+
         ctx.beginPath();
         ctx.strokeStyle = "#aaa";
-        dashed(currentX/40,currentY/40,40);
+        dashed(currentX,currentY);
         ctx.stroke();
         ctx.closePath();
         //ctx.stroke();//TODO delete
@@ -35,6 +42,31 @@ var CanvasScreen = function ( canvasElem ) {
             bg = "white";
         }
         ctx.fillStyle = bg;
+    }
+    let roundedRect = ( x, y ) => {
+
+        ctx.moveTo( x + 10, y );
+        ctx.lineTo( x + 30, y );
+        ctx.quadraticCurveTo( x + 40, y, x + 40, y + 10 );
+        ctx.lineTo( x + 40, y + 30 );
+        ctx.quadraticCurveTo( x + 40, y + 40, x + 30, y + 40 );
+        ctx.lineTo( x + 10, y + 40 );
+        ctx.quadraticCurveTo( x, y + 40, x, y + 30 );
+        ctx.lineTo( x + 0, y + 10 );
+        ctx.quadraticCurveTo( x ,y ,x + 10, y );
+    }
+    function dashed( x, y ){
+
+        ctx.moveTo( x + 10, y);
+        ctx.lineTo( x + 30, y);
+        ctx.moveTo( x + 40, y + 10 );
+        ctx.lineTo( x + 40, y + 30 );
+        ctx.moveTo( x + 30, y + 40 );
+        ctx.lineTo( x + 10, y + 40 );
+        ctx.moveTo( x, y + 30 );
+        ctx.lineTo( x, y + 10 );
+        ctx.moveTo( x + 10, y );
+
     }
     /**
         Public function, draw elements in canvas
@@ -75,32 +107,15 @@ var CanvasScreen = function ( canvasElem ) {
         ctx.strokeText(text, canvasElem.width/2, canvasElem.height/2);
 
     }
-
-    let roundedRect = (x,y) => {
-
-        ctx.moveTo( x + 10, y );
-        ctx.lineTo( x + 30, y );
-        ctx.quadraticCurveTo( x + 40, y, x + 40, y + 10 );
-        ctx.lineTo( x + 40, y + 30 );
-        ctx.quadraticCurveTo( x + 40, y + 40, x + 30, y + 40 );
-        ctx.lineTo( x + 10, y + 40 );
-        ctx.quadraticCurveTo( x, y + 40, x, y + 30 );
-        ctx.lineTo( x + 0, y + 10 );
-        ctx.quadraticCurveTo( x ,y ,x + 10, y );
-
+    /**
+        public function, it passes dimensions of board
+        @return {array} returns dimensions of board
+    */
+    this.getDimensions = function () {
+        return [sizeX,sizeY];
     }
-    function dashed(x,y,size){
 
-        ctx.moveTo(x*size+10,y*size+0);
-        ctx.lineTo(x*size+30,y*size+0);
-        ctx.moveTo(x*size+40,y*size+10);
-        ctx.lineTo(x*size+40,y*size+30);
-        ctx.moveTo(x*size+30,y*size+40);
-        ctx.lineTo(x*size+10,y*size+40);
-        ctx.moveTo(x*size+0,y*size+30);
-        ctx.lineTo(x*size+0,y*size+10);
-        ctx.moveTo(x*size+10,y*size+0);
 
-    }
+
     return init();
 }
