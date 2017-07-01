@@ -31,7 +31,6 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         dashed(currentX,currentY);
         ctx.stroke();
         ctx.closePath();
-        //ctx.stroke();//TODO delete
     }
     let setBgSquare = ( obj ) => {
         let bg;
@@ -80,7 +79,6 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         array.forEach( (v) => {
 
             v.forEach( (sq) => {
-                //console.log(sq);
                 drawSingleSquare(sq);
                 currentX += SIZE;
             });
@@ -98,14 +96,13 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     */
     this.drawText = function ( text, colorFill, colorStroke, fontSize ) {
         ctx.beginPath();
-        ctx.font = "bold " + fontSize + "px Comic Sans MS";
+        ctx.font = "bold " + fontSize + "px Impact, Charcoal";
         ctx.fillStyle = colorFill;
         ctx.strokeStyle = colorStroke;
         ctx.lineWidth = 3;
         ctx.textAlign = "center";
         ctx.fillText(text, canvasElem.width/2, canvasElem.height/2);
         ctx.strokeText(text, canvasElem.width/2, canvasElem.height/2);
-
     }
     /**
         public function, it passes dimensions of board

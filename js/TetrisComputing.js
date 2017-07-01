@@ -146,8 +146,8 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
             if ( coordElemY < SIZE_Y ) {
                 window.requestAnimationFrame( fillBoard );
             } else {
-                //TODO show something like text
-                screenHandler.drawText( "Game Over", "#ffffff", "#FF0000" , 60 );
+                //TODO show reset button
+                screenHandler.drawText( "Game Over", "#00bcd4", "#082462" , 60 );
             }
         }
         fillBoard();
@@ -184,12 +184,16 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
         createEmptyBoard( nextElemBoard, 4,4 );
         drawElemOnBoard( nextElemBoard, nextElem[0], nextElemColor ,true,0,0 );
         nextItemScreen.draw( nextElemBoard );
-        checkAndRemoveProperLine();
 
         refreshScreen();
-        currentIdInterval = setInterval( () => {
-            moveElemDown();
-        },1000);
+        checkAndRemoveProperLine();
+        if ( !canMoveElem() ) { //checks if new element is covering other element
+            endGame();
+        } else {
+            currentIdInterval = setInterval( () => {
+                moveElemDown();
+            },1000);
+        }
 
     }
     let checkAndRemoveProperLine = () => {

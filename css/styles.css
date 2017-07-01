@@ -8,27 +8,25 @@
 }
 
 .game-content {
+    background-image: url("../img/background.png");
+    background-position: 0 0;
+    background-repeat: repeat-x;
     display: flex;
     flex-wrap: nowrap;
 }
 .screen-container {
-    width:600px;
-    background-color: #eee;
+
 }
 .screen {
-    /*width: 580px;
-    height: 600px;*/
-    display:block;
+    display: block;
     margin: 0 auto;
     border:1px solid black;
-    background-color: #fefefe;
+    margin: 0 40px;
 }
 .game-informations {
-    background: #aaa;
     width: 400px;
 }
 .next-piece {
-    background-color: #999;
     padding: 10px;
 }
 .piece {

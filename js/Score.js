@@ -4,7 +4,6 @@ This connected with score like computing and showing it
 @param {object} elem DOM element contains whole score
 @param {object} addedScore DOM element, contains score what player just got
 */
-//TODO add some animations
 var Score = function ( elem, addedScoreElem ) {
     "use strict";
     let score = 0,
