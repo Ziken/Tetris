@@ -15,11 +15,10 @@
     flex-wrap: nowrap;
 }
 .screen-container {
-
+    position: relative;
 }
 .screen {
     display: block;
-    margin: 0 auto;
     border:1px solid black;
     margin: 0 40px;
 }
@@ -51,4 +50,15 @@
     font-size: 20px;
     margin: 5px 0 0 0;
     color: red;
+}
+.btn-play {
+    font-size: 40px;
+    background: #00bcd4;
+    border: 11px solid #082462;
+    color: #FFEB3B;
+    border-radius: 8px;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, 0);
 }

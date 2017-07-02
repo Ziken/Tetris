@@ -11,13 +11,24 @@ var Score = function ( elem, addedScoreElem ) {
         fontSizeAddedScore = +window.getComputedStyle(addedScoreElem,null).getPropertyValue("font-size").split(/[a-zA-Z]+/)[0];
 
     let showScore = (addedScore) => {
-        let scoreLen = ("" + score).length;
-        let finalScore = "";
-        for(let i = scoreLen; i < 9; i++) finalScore += "0";
-        finalScore += score;
-        elem.innerHTML = finalScore;
+        animateScore(addedScore);
         addedScoreElem.innerHTML = "+" + addedScore;
         addedScoreElem.style.fontSize = fontSizeAddedScore + 2 * addedScore / 100  + "px";
+    }
+    let animateScore = (addedScore) => {
+        let scoreBegin = score,
+            increase = addedScore/100;
+        score += addedScore;
+        let anim = () => {
+            scoreBegin+=increase;
+            let scoreLen = ("" + scoreBegin).length;
+            let finalScore = "";
+            for(let i = scoreLen; i < 9; i++) finalScore += "0";
+            finalScore += scoreBegin;
+            elem.innerHTML = finalScore;
+            if ( scoreBegin < score ) window.requestAnimationFrame(anim);
+        }
+        anim();
     }
     let updateScore = ( rows ) => {
         let addedScore = 0;
@@ -38,7 +49,6 @@ var Score = function ( elem, addedScoreElem ) {
                 return false;
         }
         removedRows += rows;
-        score += addedScore;
         showScore(addedScore);
     }
     /**
