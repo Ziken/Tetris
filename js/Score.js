@@ -2,7 +2,7 @@
 /**
 This connected with score like computing and showing it
 @param {object} elem DOM element contains whole score
-@param {object} addedScore DOM element, contains score what player just got
+@param {object} addedScoreElem DOM element, contains score what player just got
 */
 var Score = function ( elem, addedScoreElem ) {
     "use strict";
@@ -10,6 +10,14 @@ var Score = function ( elem, addedScoreElem ) {
         removedRows = 0,
         fontSizeAddedScore = +window.getComputedStyle(addedScoreElem,null).getPropertyValue("font-size").split(/[a-zA-Z]+/)[0];
 
+    let init = () => {
+        resetScore();
+    }
+    let resetScore = () => {
+        score = 0;
+        removedRows = 0;
+        addedScoreElem.innerHTML = "";
+    }
     let showScore = (addedScore) => {
         animateScore(addedScore);
         addedScoreElem.innerHTML = "+" + addedScore;
@@ -58,5 +66,14 @@ var Score = function ( elem, addedScoreElem ) {
     this.computeScore = ( rows ) => {
         updateScore(rows);
     }
+    this.getLastStats = () => {
+        return {
+            "Score": score,
+            "Rows": removedRows,
+            "Time": 0
+        };
+    }
+
+    return init();
 
 }

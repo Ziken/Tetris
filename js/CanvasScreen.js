@@ -1,6 +1,8 @@
 /**
  * Class for drawing elements in canvas
- * @param {object} canvasElem handler of canvas
+ * @param {object} canvasElem DOM element of canvas
+ * @param {integer} sizeX how many colums
+ * @param {integer} sizeY how many rows
 */
 var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     "use strict";
@@ -15,8 +17,8 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
             h = sizeY * SIZE;
         canvasElem.width = w;
         canvasElem.height = h;
-        ctx.fillStyle = "white";
-        ctx.fillRect( 0, 0, w, h );
+
+        resetScreen();
     }
     let drawSingleSquare = ( obj ) => {
         ctx.beginPath();
@@ -55,7 +57,6 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         ctx.quadraticCurveTo( x ,y ,x + 10, y );
     }
     function dashed( x, y ){
-
         ctx.moveTo( x + 10, y);
         ctx.lineTo( x + 30, y);
         ctx.moveTo( x + 40, y + 10 );
@@ -74,8 +75,9 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     this.draw = function ( array ) {
         currentX = 0,
         currentY = 0;
-        ctx.fillStyle = "white";
-        ctx.fillRect( 0, 0, canvasElem.width, canvasElem.height );
+
+        resetScreen();
+
         array.forEach( (v) => {
 
             v.forEach( (sq) => {
@@ -103,6 +105,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         ctx.textAlign = "center";
         ctx.fillText(text, canvasElem.width/2, canvasElem.height/2);
         ctx.strokeText(text, canvasElem.width/2, canvasElem.height/2);
+        ctx.closePath();
     }
     /**
         public function, it passes dimensions of board
@@ -110,6 +113,16 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     */
     this.getDimensions = function () {
         return [sizeX,sizeY];
+    }
+    let resetScreen = () => {
+        ctx.fillStyle = "white";
+        ctx.fillRect( 0, 0, canvasElem.width, canvasElem.height );
+    }
+    this.fullResetScreen = function () {
+        let a = canvasElem.width;
+        canvasElem.width = 0;
+        canvasElem.width = a;
+        resetScreen();
     }
 
 
