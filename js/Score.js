@@ -8,20 +8,25 @@ var Score = function ( elem, addedScoreElem ) {
     "use strict";
     let score = 0,
         removedRows = 0,
-        timer,
+        startTimer,
+        endTimer,
         comboRows = [ 0,0,0,0,0 ],
         fontSizeAddedScore = +window.getComputedStyle(addedScoreElem,null).getPropertyValue("font-size").split(/[a-zA-Z]+/)[0];
 
     let init = () => {
         this.resetScore();
     }
+    /**
+        public function, it resets global variables what contains information about score
+    */
     this.resetScore = () => {
         score = 0;
         removedRows = 0;
         comboRows = [ 0,0,0,0,0 ];
         addedScoreElem.innerHTML = "";
         elem.innerHTML = "000000000";
-        timer = new Date();
+        startTimer = new Date();
+        endTimer = startTimer;
     }
     let showScore = (addedScore) => {
         animateScore(addedScore);
@@ -72,6 +77,9 @@ var Score = function ( elem, addedScoreElem ) {
     this.computeScore = ( rows ) => {
         updateScore(rows);
     }
+    this.stopTime = () => {
+        endTimer = new Date();
+    }
     /**
     public function, it provides statistics
     @return {object} last statistics, after lost game
@@ -84,7 +92,7 @@ var Score = function ( elem, addedScoreElem ) {
             "Combo 2 rows": comboRows[2],
             "Combo 3 rows": comboRows[3],
             "Combo 4 rows": comboRows[4],
-            "Time": (new Date()) - timer
+            "Time": endTimer - startTimer
         };
     }
 

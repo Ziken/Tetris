@@ -1,9 +1,12 @@
 /**
 
     Class for preparing whole stuff like array and work on it.
-    @param {object} elem handler of canvas
+    @param {object} screenHandler class, main screen
+    @param {object} nextItemScreen class, screen for "next element"
+    @param {object} scoreHandler class, work with score
+    @param {object} menuHandler class, work with menu
 */
-var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
+var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, menuHandler ) {
     "use strict";
     //size of board
     const [SIZE_X,SIZE_Y] = screenHandler.getDimensions();
@@ -18,7 +21,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
             this.isLocked =   false;  // if it can moves
             this.isActived =  false;  // if it is moving
         },
-        coordElemX = 3,
+        coordElemX = 0,
         coordElemY = 0,
         currentElem,
         currentElemColor,
@@ -88,11 +91,9 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
     }
 
     let init = () => {
-        createEmptyBoard(board, SIZE_Y, SIZE_X);
-        drawOnScreen(board);
-        nextElem = getRandomElem();
-        nextElemColor = getRandomColor();
+        //resetGame();
         window.addEventListener("keyup",workWithKeys,true);
+        menuHandler.setStartFunction(this.start);
 
     }
     let createEmptyBoard = ( brd, rows, cols ) => {
@@ -118,7 +119,6 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
         if ( lockElem ) activ = false;
         for (let i = 0; i < 4; i++) {
             let singleSq = board[ coordY + type[i][0] ][ coordX + type[i][1] ];
-
             singleSq.isActived = activ;
             singleSq.isLocked = lockElem;
             singleSq.bgColor = bgColor;
@@ -136,6 +136,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
         disableMoving = true;
         coordElemX = 0;
         coordElemY = 0;
+        scoreHandler.stopTime();
         let fillBoard = () => {
             refreshScreen( true );
             coordElemX++;
@@ -148,6 +149,9 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
             } else {
                 //TODO show reset button
                 screenHandler.drawText( "Game Over", "#00bcd4", "#082462" , 60 );
+                setTimeout(()=>{
+                    menuHandler.showLastStats( scoreHandler.getLastStats() );
+                }, 1000);
             }
         }
         fillBoard();
@@ -172,10 +176,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
             endGame();
             return true;//don't execute rest of the code
         }
-        coordElemX = 3,
-        coordElemY = 0,
-        rotateStatus = 0;
-
+        resetCoords();
         currentElem = getCoppyOfArray( nextElem );
         currentElemColor = nextElemColor;
         nextElem = getRandomElem();
@@ -284,8 +285,24 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler ) {
             break;
         }
     }
+    let resetCoords = () => {
+        coordElemX = Math.round(SIZE_X/2) - 2,
+        coordElemY = 0,
+        rotateStatus = 0;
+    }
+    let resetGame = () => {
+        resetCoords();
+        screenHandler.fullResetScreen();
+        disableMoving = false;
+        nextElem = getRandomElem();
+        nextElemColor = getRandomColor();
 
+        createEmptyBoard(board, SIZE_Y, SIZE_X);
+        drawOnScreen(board);
+    }
     this.start = () => {
+        resetGame();
+        scoreHandler.resetScore();
         giveNextElem();
     }
     return init();
