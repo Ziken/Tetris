@@ -1,8 +1,8 @@
 /**
  * Class for drawing elements in canvas
- * @param {object} canvasElem DOM element of canvas
- * @param {integer} sizeX how many colums
- * @param {integer} sizeY how many rows
+ * @param {object} canvasElem DOM element, canvas
+ * @param {integer} sizeX how many columns in board
+ * @param {integer} sizeY how many rows in board
 */
 var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     "use strict";
@@ -13,6 +13,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
 
 
     let init = () => {
+        //set size of canvas, according to rows and columns
         let w = sizeX * SIZE,
             h = sizeY * SIZE;
         canvasElem.width = w;
@@ -28,12 +29,14 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         ctx.fill();
         ctx.closePath();
 
+        //draw "border"
         ctx.beginPath();
         ctx.strokeStyle = "#aaa";
         dashed(currentX,currentY);
         ctx.stroke();
         ctx.closePath();
     }
+
     let setBgSquare = ( obj ) => {
         let bg;
         if ( obj.isActived || obj.isLocked) {

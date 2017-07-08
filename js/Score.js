@@ -17,7 +17,7 @@ var Score = function ( elem, addedScoreElem ) {
         this.resetScore();
     }
     /**
-        public function, it resets global variables what contains information about score
+        public function, it resets global variables which contains information about score
     */
     this.resetScore = () => {
         score = 0;
@@ -34,6 +34,8 @@ var Score = function ( elem, addedScoreElem ) {
         addedScoreElem.style.fontSize = fontSizeAddedScore + 2 * addedScore / 100  + "px";
     }
     let animateScore = (addedScore) => {
+        addedScoreElem.style.display = "block";
+
         let scoreBegin = score,
             increase = addedScore/100;
         score += addedScore;
@@ -44,7 +46,11 @@ var Score = function ( elem, addedScoreElem ) {
             for(let i = scoreLen; i < 9; i++) finalScore += "0";
             finalScore += scoreBegin;
             elem.innerHTML = finalScore;
-            if ( scoreBegin < score ) window.requestAnimationFrame(anim);
+            if ( scoreBegin < score ) {
+                window.requestAnimationFrame(anim);
+            } else {
+                addedScoreElem.style.display = "none";
+            }
         }
         anim();
     }
