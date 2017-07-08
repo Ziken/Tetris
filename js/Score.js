@@ -1,59 +1,56 @@
 
 /**
-This connected with score like computing and showing it
-@param {object} elem DOM element contains whole score
-@param {object} addedScoreElem DOM element, contains score what player just got
+    This connected with score like computing and showing it
+    @param {object} elem DOM element, it shows score
+    @param {object} addedScoreElem DOM element, it shows score what player just got
 */
 var Score = function ( elem, addedScoreElem ) {
     "use strict";
     let score = 0,
         removedRows = 0,
-        startTimer,
-        endTimer,
+        startTimer,// time when player starts game
+        endTimer,// time when player ends game
         comboRows = [ 0,0,0,0,0 ],
         fontSizeAddedScore = +window.getComputedStyle(addedScoreElem,null).getPropertyValue("font-size").split(/[a-zA-Z]+/)[0];
 
     let init = () => {
         this.resetScore();
     }
-    /**
-        public function, it resets global variables which contains information about score
-    */
-    this.resetScore = () => {
-        score = 0;
-        removedRows = 0;
-        comboRows = [ 0,0,0,0,0 ];
-        addedScoreElem.innerHTML = "";
-        elem.innerHTML = "000000000";
-        startTimer = new Date();
-        endTimer = startTimer;
-    }
     let showScore = (addedScore) => {
         animateScore(addedScore);
         addedScoreElem.innerHTML = "+" + addedScore;
         addedScoreElem.style.fontSize = fontSizeAddedScore + 2 * addedScore / 100  + "px";
     }
+    /**
+        very simply animation of score
+        @param {number} addedScore amount points which player just got
+    */
     let animateScore = (addedScore) => {
-        addedScoreElem.style.display = "block";
+        addedScoreElem.style.display = "block";//show element which presents amount of points which player got
 
         let scoreBegin = score,
             increase = addedScore/100;
         score += addedScore;
+        //animation
         let anim = () => {
             scoreBegin+=increase;
             let scoreLen = ("" + scoreBegin).length;
             let finalScore = "";
-            for(let i = scoreLen; i < 9; i++) finalScore += "0";
+            for (let i = scoreLen; i < 9; i++) finalScore += "0"; //add leading 0
             finalScore += scoreBegin;
             elem.innerHTML = finalScore;
             if ( scoreBegin < score ) {
                 window.requestAnimationFrame(anim);
             } else {
-                addedScoreElem.style.display = "none";
+                addedScoreElem.style.display = "none"; // hide
             }
         }
         anim();
     }
+    /**
+        give points to player according to amount of rows
+        @param {number} rows amount of removed rows by player
+    */
     let updateScore = ( rows ) => {
         let addedScore = 0;
         comboRows[rows]++;
@@ -77,8 +74,20 @@ var Score = function ( elem, addedScoreElem ) {
         showScore(addedScore);
     }
     /**
-    public function, it computing score based on rows
-    @param {int} rows how many rows player removed
+        public function, it resets global variables which contains information about score
+    */
+    this.resetScore = () => {
+        score = 0;
+        removedRows = 0;
+        comboRows = [ 0,0,0,0,0 ];
+        addedScoreElem.innerHTML = "";
+        elem.innerHTML = "000000000";
+        startTimer = new Date();
+        endTimer = startTimer;
+    }
+    /**
+        public function, it computing score based on rows
+        @param {int} rows how many rows player removed
     */
     this.computeScore = ( rows ) => {
         updateScore(rows);
@@ -87,8 +96,8 @@ var Score = function ( elem, addedScoreElem ) {
         endTimer = new Date();
     }
     /**
-    public function, it provides statistics
-    @return {object} last statistics, after lost game
+        public function, it provides statistics to GameMenu.js
+        @return {object} last statistics, after lost game
     */
     this.getLastStats = () => {
         return {

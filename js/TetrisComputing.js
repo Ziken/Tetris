@@ -3,26 +3,25 @@
     Class for preparing whole stuff like array and work on it.
     @param {object} screenHandler class, main screen
     @param {object} nextItemScreen class, screen for "next element"
-    @param {object} scoreHandler class, work with score
-    @param {object} menuHandler class, work with menu
+    @param {object} scoreHandler class, deal with score
+    @param {object} menuHandler class, deal with menu
 */
 var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, menuHandler ) {
     "use strict";
     //size of board
     const [SIZE_X,SIZE_Y] = screenHandler.getDimensions();
     const COLORS = [
-        //"#fe7d15","#9c3821","#538c19","#0c92b8","#f44336","#ffeb3b","#8bc34a"
-        "#fe2712", "#8601af", "#0247fe", "#66b032", "#d0ea2b", "#fb9902"
+        "#fe2712", "#8601af", "#0247fe", "#66b032", "#d0ea2b", "#fb9902"/*, "#19e0ff", "#57ff0f"*/
     ];
-    let board = [],
-        nextElemBoard = [],
+    let board = [], //main board
+        nextElemBoard = [],// board to show next elem
         clearSquare = function () {
             this.bgColor =    "";   // backgorund of block
             this.isLocked =   false;  // if it can moves
             this.isActived =  false;  // if it is moving
         },
-        coordElemX = 0,
-        coordElemY = 0,
+        coordElemX = 0,// where piece is located
+        coordElemY = 0,// where piece is located
         currentElem,
         currentElemColor,
         nextElem,
@@ -91,11 +90,18 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
     }
 
     let init = () => {
-        //resetGame();
-        window.addEventListener("keyup",workWithKeys,true);
+        resetGame();
+        window.addEventListener("keydown",workWithKeys,true); //it should be keyup, now is exposed to bugs
         menuHandler.setStartFunction(this.start);
 
     }
+    /**
+        create board filled with empty squares
+        @param {array} brd save elements to this element
+        @param {number} rows amount of rows
+        @param {number} cols amount of columns
+        @return {arrray} array of empty squares
+    */
     let createEmptyBoard = ( brd, rows, cols ) => {
         brd = brd || [];
         for (let y = 0; y < rows ;y++) {
@@ -112,6 +118,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
     let drawOnScreen = ( board ) => {
         screenHandler.draw( board );
     }
+
     let drawElemOnBoard = ( board, type, bgColor, lockElem, coordX, coordY ) => {
         lockElem = lockElem || false;
 
@@ -137,6 +144,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         coordElemX = 0;
         coordElemY = 0;
         scoreHandler.stopTime();
+        //animation
         let fillBoard = () => {
             refreshScreen( true );
             coordElemX++;
@@ -170,6 +178,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
 
         return color;
     }
+
     let giveNextElem = () => {
         clearInterval( currentIdInterval );
         if ( checkIfPlayerLost() ) {
@@ -188,15 +197,16 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
 
         refreshScreen();
         checkAndRemoveProperLine();
-        if ( !canMoveElem() ) { //checks if new element is covering other element
+        if ( !canMoveElem() ) { //checks if new element is covering other element and can't appear
             endGame();
         } else {
+            //move piece towards down every second
             currentIdInterval = setInterval( () => {
                 moveElemDown();
             },1000);
         }
-
     }
+
     let checkAndRemoveProperLine = () => {
         let ifRemove = true,
             newBoard,
@@ -230,15 +240,18 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         }
         return false;
     }
+
     let rotateElem = () => {
         rotateStatus++;
         if ( rotateStatus > 3 )
             rotateStatus = 0;
         if( !canMoveElem() ) rotateStatus = (rotateStatus==0?3:rotateStatus-1);
     }
+
     let moveElemDown = () => {
         //I suppose it can moves if doesn't, back previous value
         coordElemY++;
+        //if piece is touching other element give next one
         if ( !canMoveElem() ) {
             coordElemY--;
             //LOCK ELEMENT

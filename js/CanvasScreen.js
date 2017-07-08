@@ -21,6 +21,10 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
 
         resetScreen();
     }
+    /**
+        draw single square in canvas
+        @param {object} obj it contains informations about square
+    */
     let drawSingleSquare = ( obj ) => {
         ctx.beginPath();
         ctx.strokeStyle = "#333";
@@ -36,17 +40,25 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         ctx.stroke();
         ctx.closePath();
     }
-
+    /**
+        Set background of square
+        @param {object} obj it contains informations about square
+    */
     let setBgSquare = ( obj ) => {
         let bg;
-        if ( obj.isActived || obj.isLocked) {
+        if ( obj.isActived || obj.isLocked) { // conditions when square can be colored
             bg = obj.bgColor;
-            ctx.stroke();
+            ctx.stroke(); // stress colored squares
         } else {
-            bg = "white";
+            bg = "white"; //default color
         }
         ctx.fillStyle = bg;
     }
+    /**
+        Draw rounded square
+        @param {number} x coordinate x
+        @param {number} y coordinate y
+    */
     let roundedRect = ( x, y ) => {
 
         ctx.moveTo( x + 10, y );
@@ -59,6 +71,11 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         ctx.lineTo( x + 0, y + 10 );
         ctx.quadraticCurveTo( x ,y ,x + 10, y );
     }
+    /**
+        Draw "dashed" border
+        @param {number} x coordinate x
+        @param {number} y coordinate y
+    */
     function dashed( x, y ){
         ctx.moveTo( x + 10, y);
         ctx.lineTo( x + 30, y);
@@ -72,13 +89,21 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
 
     }
     /**
-        Public function, draw elements in canvas
-        @param {array} array array of objects
+        draw big white rect to reset screen
+    */
+    let resetScreen = () => {
+        ctx.fillStyle = "white";
+        ctx.fillRect( 0, 0, canvasElem.width, canvasElem.height );
+    }
+    /**
+        Public function, draw elements on canvas
+        @param {array} array array of objects (squares)
     */
     this.draw = function ( array ) {
         currentX = 0,
         currentY = 0;
 
+        //every time clean screen
         resetScreen();
 
         array.forEach( (v) => {
@@ -94,7 +119,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
     /**
         public function, draw text on screen, at center.
-        @param {string} text what write
+        @param {string} text what text write
         @param {string} colorFill hex color of filled text
         @param {string} colorStroke hex color of border of text
         @param {integer} fontSize size of font in px
@@ -115,20 +140,17 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         @return {array} returns dimensions of board
     */
     this.getDimensions = function () {
-        return [sizeX,sizeY];
+        return [sizeX,sizeY];//in this format because [x,y] = [sizeX,sizeY] (es6)
     }
-    let resetScreen = () => {
-        ctx.fillStyle = "white";
-        ctx.fillRect( 0, 0, canvasElem.width, canvasElem.height );
-    }
+    /*
+        public function, Reset screen very strict
+    */
     this.fullResetScreen = function () {
         let a = canvasElem.width;
         canvasElem.width = 0;
         canvasElem.width = a;
         resetScreen();
     }
-
-
 
     return init();
 }

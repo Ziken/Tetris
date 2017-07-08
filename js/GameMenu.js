@@ -1,24 +1,25 @@
 /**
  * Class for using menu, and score
- * @param {object} menuHandler DOM element of menu element
- * @param {object} statsHandler DOM element of stats element after click buttonShowStats
- * @param {object} lastScoreHandler DOM element of elements which shows stats after end game
- * @param {object} buttonPlay DOM element which starts game
- * @param {object} buttonShowStats DOM element which shows general statistics
+ * @param {object} menuHandler DOM of menu element
+ * @param {object} statsHandler DOM of stats element after click buttonShowStats
+ * @param {object} lastScoreHandler DOM of elements which shows stats after end game
+ * @param {object} buttonPlay DOM of button which starts game
+ * @param {object} buttonShowStats DOM of button which shows general statistics
 */
 var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPlay, buttonShowStats ) {
 
-    let startGameFunc = ()=>{};
+    let startGameFunc = () => {};
     let generalStats = {};
-    const COOKIE_EXPIRE_DAYS = 100,
-          SHOW_CLASS = "show-elem";
+    const COOKIE_EXPIRE_DAYS = 30,
+          SHOW_CLASS = "show-elem";//class in css which is responsible of animate elements (opacity from 0 to 1)
 
     let init = () => {
+        //set events
         buttonPlay.addEventListener("click", startPlaying , true);
         buttonShowStats.addEventListener("click", showStats , true);
         statsHandler.addEventListener("click", hideStats , true);
         lastScoreHandler.addEventListener("click", hideLastStats , true);
-
+        //get information from cookies
         generalStats.highScore = getCookie("highscore") || 0;
         generalStats.rows = getCookie("rows") || 0;
         generalStats.playingTime = +getCookie("playingtime") || 0;
@@ -42,7 +43,6 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
     }
     let showMenu = () => {
         addClass(menuHandler, SHOW_CLASS);
-
     }
     let hideStats = () => {
         removeClass(statsHandler, SHOW_CLASS);
@@ -57,6 +57,10 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
     let showLastStats = () => {
         addClass(lastScoreHandler, SHOW_CLASS);
     }
+    /**
+        get formatted time like "0 h and 0 min. 43 secs"
+        @param {number} time it contains amount of miliseconds
+    */
     let getFormattedTime = ( time ) => {
         let formatToTime = ( t ) => {
             return ( (t-(t%60))/60 );
@@ -69,6 +73,10 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
 
         return `${hours} h and ${minutes} min. ${seconds} secs.`;
     }
+    /**
+        get formatted date like "08.06.2017 20:10:24"
+        @param {object} time it contains infomation about date (object new Date())
+    */
     let getFormattedDate = ( date ) => {
         let addLeadZero = ( num ) => {
             return (num < 10?"0"+num:num);
@@ -77,7 +85,9 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         strDate += addLeadZero(date.getHours()) + ":" + addLeadZero(date.getMinutes()) + ":" + addLeadZero(date.getSeconds());
         return strDate;
     }
+
     let updateGeneralStats = ( stats ) => {
+        // if last score is higher, set new general score
         if ( stats["Score"] > generalStats.highScore ) {
             generalStats.highScore = stats["Score"];
             generalStats.rows = stats["Rows"];
@@ -87,10 +97,15 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         generalStats.lastPlayed = getFormattedDate(new Date());
 
         for (const key of Object.keys(generalStats)) {
-            createCookie(key.toLowerCase(), generalStats[key], COOKIE_EXPIRE_DAYS);
+            createCookie(key.toLowerCase(), generalStats[key], COOKIE_EXPIRE_DAYS); //save it to cookies
         }
-
     }
+    /**
+        create row of table
+        @param {string} name first cell of row
+        @param {string} value second cell of row
+        @return {string} row of table with values
+    */
     let createRowTable = ( name, value ) => {
         return `
 <tr>
@@ -98,6 +113,7 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
     <td class="second-cell-score">${value}</td>
 </tr>`;
     }
+
     let createCookie = ( name,value,days ) => {
         let expires = "";
         if ( days ) {
@@ -119,9 +135,13 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         return false;
     }
 
-    let eraseCookie = ( name ) => {
+    /*let eraseCookie = ( name ) => {
         createCookie(name,"",-1);
-    }
+    }*/
+
+    /**
+        Create table of information which contains general stats and show it in html
+    */
     let showGeneralStats = () => {
         let html = "<table class=\"general-stats\">";
         html += createRowTable("High score", generalStats["highScore"]);
@@ -139,7 +159,7 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         startGameFunc = func;
     }
     /**
-        public function, it presents stats (after lost game)
+        public function, it presents stats (after lost game) create table and show it in html
         @param {object} stats it contains statistics
     */
     this.showLastStats = ( stats ) => {
@@ -158,6 +178,6 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         showLastStats();
         updateGeneralStats(stats);
     }
-
+    
     return init();
 }
