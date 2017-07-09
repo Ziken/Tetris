@@ -61,7 +61,7 @@
     transition: 300ms ease;
     border-radius: 3px;
 }
-.btn-play:hover {
+.btn-play:hover, .btn-play:focus {
     background-color: #fff;
     color: #2196F3;
 }

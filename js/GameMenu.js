@@ -1,10 +1,10 @@
 /**
  * Class for using menu, and score
- * @param {object} menuHandler DOM of menu element
- * @param {object} statsHandler DOM of stats element after click buttonShowStats
- * @param {object} lastScoreHandler DOM of elements which shows stats after end game
- * @param {object} buttonPlay DOM of button which starts game
- * @param {object} buttonShowStats DOM of button which shows general statistics
+ * @param {Object} menuHandler DOM of menu element
+ * @param {Object} statsHandler DOM of stats element after click buttonShowStats
+ * @param {Object} lastScoreHandler DOM of elements which shows stats after end game
+ * @param {Object} buttonPlay DOM of button which starts game
+ * @param {Object} buttonShowStats DOM of button which shows general statistics
 */
 var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPlay, buttonShowStats ) {
 
@@ -59,7 +59,7 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
     }
     /**
         get formatted time like "0 h and 0 min. 43 secs"
-        @param {number} time it contains amount of miliseconds
+        @param {Number} time it contains amount of miliseconds
     */
     let getFormattedTime = ( time ) => {
         let formatToTime = ( t ) => {
@@ -75,7 +75,7 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
     }
     /**
         get formatted date like "08.06.2017 20:10:24"
-        @param {object} time it contains infomation about date (object new Date())
+        @param {Object} time it contains infomation about date (object new Date())
     */
     let getFormattedDate = ( date ) => {
         let addLeadZero = ( num ) => {
@@ -102,9 +102,9 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
     }
     /**
         create row of table
-        @param {string} name first cell of row
-        @param {string} value second cell of row
-        @return {string} row of table with values
+        @param {String} name first cell of row
+        @param {String} value second cell of row
+        @return {String} row of table with values
     */
     let createRowTable = ( name, value ) => {
         return `
@@ -153,14 +153,14 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         statsHandler.innerHTML = html;
     }
     /**
-        @param {function} func it contains function which starts game
+        @param {Function} func it contains function which starts game
     */
     this.setStartFunction = (func) => {
         startGameFunc = func;
     }
     /**
         public function, it presents stats (after lost game) create table and show it in html
-        @param {object} stats it contains statistics
+        @param {Object} stats it contains statistics
     */
     this.showLastStats = ( stats ) => {
         let html = "<table class=\"last-stats\">";
@@ -178,6 +178,6 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         showLastStats();
         updateGeneralStats(stats);
     }
-    
+
     return init();
 }

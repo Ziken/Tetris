@@ -1,8 +1,8 @@
 /**
  * Class for drawing elements in canvas
- * @param {object} canvasElem DOM element, canvas
- * @param {integer} sizeX how many columns in board
- * @param {integer} sizeY how many rows in board
+ * @param {Object} canvasElem DOM element, canvas
+ * @param {Number} sizeX how many columns in board
+ * @param {Number} sizeY how many rows in board
 */
 var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     "use strict";
@@ -23,7 +23,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
     /**
         draw single square in canvas
-        @param {object} obj it contains informations about square
+        @param {Object} obj it contains informations about square
     */
     let drawSingleSquare = ( obj ) => {
         ctx.beginPath();
@@ -42,7 +42,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
     /**
         Set background of square
-        @param {object} obj it contains informations about square
+        @param {Object} obj it contains informations about square
     */
     let setBgSquare = ( obj ) => {
         let bg;
@@ -56,8 +56,8 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
     /**
         Draw rounded square
-        @param {number} x coordinate x
-        @param {number} y coordinate y
+        @param {Number} x coordinate x
+        @param {Number} y coordinate y
     */
     let roundedRect = ( x, y ) => {
 
@@ -73,10 +73,10 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
     /**
         Draw "dashed" border
-        @param {number} x coordinate x
-        @param {number} y coordinate y
+        @param {Number} x coordinate x
+        @param {Number} y coordinate y
     */
-    function dashed( x, y ){
+    let dashed = ( x, y ) => {
         ctx.moveTo( x + 10, y);
         ctx.lineTo( x + 30, y);
         ctx.moveTo( x + 40, y + 10 );
@@ -97,9 +97,9 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
     /**
         Public function, draw elements on canvas
-        @param {array} array array of objects (squares)
+        @param {Array} array array of objects (squares)
     */
-    this.draw = function ( array ) {
+    this.draw = ( array ) => {
         currentX = 0,
         currentY = 0;
 
@@ -119,12 +119,12 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
     /**
         public function, draw text on screen, at center.
-        @param {string} text what text write
-        @param {string} colorFill hex color of filled text
-        @param {string} colorStroke hex color of border of text
-        @param {integer} fontSize size of font in px
+        @param {String} text what text write
+        @param {String} colorFill hex color of filled text
+        @param {String} colorStroke hex color of border of text
+        @param {Number} fontSize size of font in px
     */
-    this.drawText = function ( text, colorFill, colorStroke, fontSize ) {
+    this.drawText = ( text, colorFill, colorStroke, fontSize ) => {
         ctx.beginPath();
         ctx.font = "bold " + fontSize + "px Impact, Charcoal";
         ctx.fillStyle = colorFill;
@@ -137,15 +137,15 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
     /**
         public function, it passes dimensions of board
-        @return {array} returns dimensions of board
+        @return {Array} returns dimensions of board
     */
-    this.getDimensions = function () {
+    this.getDimensions = () => {
         return [sizeX,sizeY];//in this format because [x,y] = [sizeX,sizeY] (es6)
     }
     /*
         public function, Reset screen very strict
     */
-    this.fullResetScreen = function () {
+    this.fullResetScreen = () => {
         let a = canvasElem.width;
         canvasElem.width = 0;
         canvasElem.width = a;

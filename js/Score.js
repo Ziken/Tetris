@@ -1,8 +1,8 @@
 
 /**
     This connected with score like computing and showing it
-    @param {object} elem DOM element, it shows score
-    @param {object} addedScoreElem DOM element, it shows score what player just got
+    @param {Object} elem DOM element, it shows score
+    @param {Object} addedScoreElem DOM element, it shows score what player just got
 */
 var Score = function ( elem, addedScoreElem ) {
     "use strict";
@@ -23,7 +23,7 @@ var Score = function ( elem, addedScoreElem ) {
     }
     /**
         very simply animation of score
-        @param {number} addedScore amount points which player just got
+        @param {Number} addedScore amount points which player just got
     */
     let animateScore = (addedScore) => {
         addedScoreElem.style.display = "block";//show element which presents amount of points which player got
@@ -49,7 +49,7 @@ var Score = function ( elem, addedScoreElem ) {
     }
     /**
         give points to player according to amount of rows
-        @param {number} rows amount of removed rows by player
+        @param {Number} rows amount of removed rows by player
     */
     let updateScore = ( rows ) => {
         let addedScore = 0;
@@ -97,7 +97,7 @@ var Score = function ( elem, addedScoreElem ) {
     }
     /**
         public function, it provides statistics to GameMenu.js
-        @return {object} last statistics, after lost game
+        @return {Object} last statistics, after lost game
     */
     this.getLastStats = () => {
         return {

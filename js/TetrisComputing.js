@@ -1,10 +1,10 @@
 /**
 
     Class for preparing whole stuff like array and work on it.
-    @param {object} screenHandler class, main screen
-    @param {object} nextItemScreen class, screen for "next element"
-    @param {object} scoreHandler class, deal with score
-    @param {object} menuHandler class, deal with menu
+    @param {Object} screenHandler class, main screen
+    @param {Object} nextItemScreen class, screen for "next element"
+    @param {Object} scoreHandler class, deal with score
+    @param {Object} menuHandler class, deal with menu
 */
 var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, menuHandler ) {
     "use strict";
@@ -97,10 +97,10 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
     }
     /**
         create board filled with empty squares
-        @param {array} brd save elements to this element
-        @param {number} rows amount of rows
-        @param {number} cols amount of columns
-        @return {arrray} array of empty squares
+        @param {Array} brd save elements to this element
+        @param {Number} rows amount of rows
+        @param {Number} cols amount of columns
+        @return {Array} array of empty squares
     */
     let createEmptyBoard = ( brd, rows, cols ) => {
         brd = brd || [];
