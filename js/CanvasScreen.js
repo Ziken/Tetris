@@ -7,15 +7,16 @@
 var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     "use strict";
     const SIZE = 40; //size of square
-    let ctx = canvasElem.getContext( "2d" ),
-        currentX = 0,
-        currentY = 0;
+    let ctx = canvasElem.getContext( "2d" );
+    let currentX = 0;
+    let currentY = 0;
 
 
     let init = () => {
         //set size of canvas, according to rows and columns
-        let w = sizeX * SIZE,
-            h = sizeY * SIZE;
+        let w = sizeX * SIZE;
+        let h = sizeY * SIZE;
+
         canvasElem.width = w;
         canvasElem.height = h;
 
@@ -26,6 +27,12 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         @param {Object} obj it contains informations about square
     */
     let drawSingleSquare = ( obj ) => {
+        obj = obj || {
+            isActived: false,
+            isLocked: false,
+            bgColor: ""
+        }
+
         ctx.beginPath();
         ctx.strokeStyle = "#333";
         roundedRect(currentX,currentY);
@@ -59,7 +66,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         @param {Number} x coordinate x
         @param {Number} y coordinate y
     */
-    let roundedRect = ( x, y ) => {
+    let roundedRect = ( x = 0, y = 0 ) => {
 
         ctx.moveTo( x + 10, y );
         ctx.lineTo( x + 30, y );
@@ -76,7 +83,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         @param {Number} x coordinate x
         @param {Number} y coordinate y
     */
-    let dashed = ( x, y ) => {
+    let dashed = ( x = 0, y = 0 ) => {
         ctx.moveTo( x + 10, y);
         ctx.lineTo( x + 30, y);
         ctx.moveTo( x + 40, y + 10 );
@@ -99,7 +106,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         Public function, draw elements on canvas
         @param {Array} array array of objects (squares)
     */
-    this.draw = ( array ) => {
+    this.draw = ( array = [] ) => {
         currentX = 0,
         currentY = 0;
 
@@ -124,7 +131,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         @param {String} colorStroke hex color of border of text
         @param {Number} fontSize size of font in px
     */
-    this.drawText = ( text, colorFill, colorStroke, fontSize ) => {
+    this.drawText = ( text = "", colorFill = "#fff", colorStroke = "#fff", fontSize = 16 ) => {
         ctx.beginPath();
         ctx.font = "bold " + fontSize + "px Impact, Charcoal";
         ctx.fillStyle = colorFill;
@@ -152,5 +159,5 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         resetScreen();
     }
 
-    return init();
+    init();
 }

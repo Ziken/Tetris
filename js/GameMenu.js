@@ -32,11 +32,13 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         hideMenu();
         startGameFunc();
     }
-    let addClass = ( elem, className ) => {
-        elem.classList.add(className);
+    let addClass = ( elem , className = "" ) => {
+        if ( elem instanceof Element )
+            elem.classList.add(className);
     }
-    let removeClass = ( elem, className ) => {
-        elem.classList.remove(className);
+    let removeClass = ( elem, className = "" ) => {
+        if ( elem instanceof Element )
+            elem.classList.remove(className);
     }
     let hideMenu = () => {
         removeClass(menuHandler, SHOW_CLASS);
@@ -61,9 +63,9 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         get formatted time like "0 h and 0 min. 43 secs"
         @param {Number} time it contains amount of miliseconds
     */
-    let getFormattedTime = ( time ) => {
+    let getFormattedTime = ( time = 0 ) => {
         let formatToTime = ( t ) => {
-            return ( (t-(t%60))/60 );
+            return (t - t % 60) / 60;
         }
         let seconds = Math.round(time/1000);
         let minutes = formatToTime(seconds);
@@ -77,28 +79,36 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         get formatted date like "08.06.2017 20:10:24"
         @param {Object} time it contains infomation about date (object new Date())
     */
-    let getFormattedDate = ( date ) => {
+    let getFormattedDate = ( date = new Date() ) => {
         let addLeadZero = ( num ) => {
             return (num < 10?"0"+num:num);
         }
-        let strDate = addLeadZero(date.getDate()) + "." + addLeadZero(date.getMonth()) + "." + date.getFullYear() + " ";
+        return `${addLeadZero(date.getDate())}.${addLeadZero(date.getMonth())}.${date.getFullYear()}
+${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(date.getSeconds())}`
+        /*let strDate = addLeadZero(date.getDate()) + "." + addLeadZero(date.getMonth()) + "." + date.getFullYear() + " ";
         strDate += addLeadZero(date.getHours()) + ":" + addLeadZero(date.getMinutes()) + ":" + addLeadZero(date.getSeconds());
-        return strDate;
+        return strDate;*/
     }
 
-    let updateGeneralStats = ( stats ) => {
+    let updateGeneralStats = ( stats = {} ) => {
         // if last score is higher, set new general score
-        if ( stats["Score"] > generalStats.highScore ) {
+        if ( stats["Score"] && stats["Score"] > generalStats.highScore ) {
             generalStats.highScore = stats["Score"];
-            generalStats.rows = stats["Rows"];
-            generalStats.playingTime = +stats["Time"];
+            generalStats.rows = stats["Rows"] || 0;
+            generalStats.playingTime = +stats["Time"] || 0;
         }
-        generalStats.allPlayedTime += +stats["Time"];
+        generalStats.allPlayedTime += +stats["Time"] || 0;
         generalStats.lastPlayed = getFormattedDate(new Date());
 
-        for (const key of Object.keys(generalStats)) {
+        let key;
+        let val;
+        Object.entries(generalStats).forEach((arr) => {
+            [key,val] = arr;
+            createCookie(key.toLowerCase(), val, COOKIE_EXPIRE_DAYS);
+        });
+        /*for (const key of Object.keys(generalStats)) {
             createCookie(key.toLowerCase(), generalStats[key], COOKIE_EXPIRE_DAYS); //save it to cookies
-        }
+        }*/
     }
     /**
         create row of table
@@ -106,7 +116,7 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         @param {String} value second cell of row
         @return {String} row of table with values
     */
-    let createRowTable = ( name, value ) => {
+    let createRowTable = ( name="", value="" ) => {
         return `
 <tr>
     <td>${name}: </td>
@@ -114,7 +124,7 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
 </tr>`;
     }
 
-    let createCookie = ( name,value,days ) => {
+    let createCookie = ( name="",value="",days= -1 ) => {
         let expires = "";
         if ( days ) {
             let date = new Date();
@@ -124,7 +134,7 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         document.cookie = name + "=" + value + expires + "; path=/";
     }
 
-    let getCookie = ( name ) => {
+    let getCookie = ( name = "" ) => {
         let nameEQ = name + "=";
         let ca = document.cookie.split(';');
         for (let i = 0;i < ca.length; i++) {
@@ -155,8 +165,9 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
     /**
         @param {Function} func it contains function which starts game
     */
-    this.setStartFunction = (func) => {
-        startGameFunc = func;
+    this.setStartFunction = ( func = {} ) => {
+        if ( func instanceof Function )
+            startGameFunc = func;
     }
     /**
         public function, it presents stats (after lost game) create table and show it in html
@@ -164,12 +175,18 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
     */
     this.showLastStats = ( stats ) => {
         let html = "<table class=\"last-stats\">";
-        let tempMs = stats["Time"];
+        let tempMs = stats["Time"] || 0;
+        let key;
+        let val;
         stats["Time"] = getFormattedTime(stats["Time"]);
-        for (const key of Object.keys(stats)) {
-            html += createRowTable(key, stats[key]);
 
-        }
+        /*for (const key of Object.keys(stats)) {
+            html += createRowTable(key, stats[key]);
+        }*/
+        Object.entries(stats).forEach((arr) => {
+            [key="",val=""] = arr;
+            html += createRowTable(key, val);
+        })
         html += "</table>";
         lastScoreHandler.innerHTML = html;
 
@@ -179,5 +196,5 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         updateGeneralStats(stats);
     }
 
-    return init();
+    init();
 }

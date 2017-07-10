@@ -13,22 +13,22 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
     const COLORS = [
         "#fe2712", "#8601af", "#0247fe", "#66b032", "#d0ea2b", "#fb9902"/*, "#19e0ff", "#57ff0f"*/
     ];
-    let board = [], //main board
-        nextElemBoard = [],// board to show next elem
-        clearSquare = function () {
+    let board = []; //main board
+    let nextElemBoard = [];// board to show next elem
+    let clearSquare = function () {
             this.bgColor =    "";   // backgorund of block
             this.isLocked =   false;  // if it can moves
             this.isActived =  false;  // if it is moving
-        },
-        coordElemX = 0,// where piece is located
-        coordElemY = 0,// where piece is located
-        currentElem,
-        currentElemColor,
-        nextElem,
-        nextElemColor,
-        currentIdInterval,
-        rotateStatus = 0, //0,1,2,3
-        disableMoving = false;
+        };
+    let coordElemX = 0;// where piece is located
+    let coordElemY = 0;// where piece is located
+    let currentElem;
+    let currentElemColor;
+    let nextElem;
+    let nextElemColor;
+    let currentIdInterval;
+    let rotateStatus = 0; //0,1,2,3
+    let disableMoving = false;
     /*
         4x4 array to represents different elements
     */
@@ -102,7 +102,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         @param {Number} cols amount of columns
         @return {Array} array of empty squares
     */
-    let createEmptyBoard = ( brd, rows, cols ) => {
+    let createEmptyBoard = ( brd, rows = 0, cols = 0 ) => {
         brd = brd || [];
         for (let y = 0; y < rows ;y++) {
             brd[y] = [];
@@ -112,15 +112,15 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         }
         return brd;
     }
-    let getCoppyOfArray = ( arr ) => {
+    let getCoppyOfArray = ( arr = [] ) => {
         return JSON.parse(JSON.stringify( arr ));
     }
-    let drawOnScreen = ( board ) => {
+    let drawOnScreen = ( board = [] ) => {
         screenHandler.draw( board );
     }
 
-    let drawElemOnBoard = ( board, type, bgColor, lockElem, coordX, coordY ) => {
-        lockElem = lockElem || false;
+    let drawElemOnBoard = ( board = [], type = 0, bgColor = "#fff", lockElem = false, coordX = 0, coordY = 0 ) => {
+
 
         let activ = true;
         if ( lockElem ) activ = false;
@@ -131,8 +131,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
             singleSq.bgColor = bgColor;
         }
     }
-    let refreshScreen = ( lockElem ) => {
-        lockElem = lockElem || false;
+    let refreshScreen = ( lockElem = false ) => {
         let cpBoard = lockElem ? board : getCoppyOfArray(board);
         drawElemOnBoard( cpBoard, currentElem[rotateStatus], currentElemColor, lockElem, coordElemX, coordElemY );
         drawOnScreen( cpBoard );
@@ -166,17 +165,14 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
     }
     let getRandomElem = () => {
         let e = ["I", "J", "L", "O", "S", "T", "Z"];
-        let re = e[ Math.floor(Math.random()*e.length) ];
+        let re = e[ Math.random()*e.length >> 0 ];
 
         return ELEMENTS[ re ];
     }
     let getRandomColor = () => {
         let color;
-        do {
-            color = COLORS[ Math.floor( Math.random()*COLORS.length ) ];
-        } while(color == nextElemColor);
-
-        return color;
+        const availColors = COLORS.filter( v => v !== nextElemColor );
+        return availColors[ Math.random() * availColors.length >> 0 ];
     }
 
     let giveNextElem = () => {
@@ -186,11 +182,12 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
             return true;//don't execute rest of the code
         }
         resetCoords();
+        //change element and get next one
         currentElem = getCoppyOfArray( nextElem );
         currentElemColor = nextElemColor;
         nextElem = getRandomElem();
         nextElemColor = getRandomColor();
-
+        //draw next element
         createEmptyBoard( nextElemBoard, 4,4 );
         drawElemOnBoard( nextElemBoard, nextElem[0], nextElemColor ,true,0,0 );
         nextItemScreen.draw( nextElemBoard );
@@ -201,16 +198,14 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
             endGame();
         } else {
             //move piece towards down every second
-            currentIdInterval = setInterval( () => {
-                moveElemDown();
-            },1000);
+            currentIdInterval = setInterval(moveElemDown, 1000);
         }
     }
 
     let checkAndRemoveProperLine = () => {
-        let ifRemove = true,
-            newBoard,
-            addedLines = 0;
+        let ifRemove = true;
+        let newBoard;
+        let addedLines = 0;
         newBoard = createEmptyBoard(newBoard, SIZE_Y, SIZE_X);
 
         for (let y = SIZE_Y-1; y >= 0; y--) {
@@ -232,13 +227,12 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         drawOnScreen( board );
     }
     let checkIfPlayerLost = () => {
-        let y = 0,
-            x = SIZE_X-1;
-        while ( x >= 0 ) {
-            if ( board[y][x].isLocked ) return true;
-            x--;
-        }
-        return false;
+        //let x = SIZE_X-1;
+        const firstRow = board[0];
+
+        //return !firstRow.every( v => !v.isLocked );
+        return firstRow.some( v => v.isLocked );
+
     }
 
     let rotateElem = () => {
@@ -270,9 +264,9 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         if ( !canMoveElem() ) coordElemX--;
     }
     let canMoveElem = () => {
-        let elem = currentElem[rotateStatus],
-            x=0,
-            y=0;
+        let elem = currentElem[rotateStatus];
+        let x = 0;
+        let y = 0;
         for (let i = 0; i < 4; i++) {
             [ x,y ] = [ elem[i][1]+coordElemX, elem[i][0]+coordElemY ];
 
@@ -283,7 +277,8 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
     }
     let workWithKeys = ( evt ) => {
         if ( disableMoving ) return false;
-        switch ( evt.keyCode ) {
+        let keyCode = evt.keyCode || 0;
+        switch ( keyCode ) {
             case 37: //left arrow
                 moveElemLeft();
             break;
@@ -318,6 +313,6 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         scoreHandler.resetScore();
         giveNextElem();
     }
-    return init();
+    init();
 
 }
