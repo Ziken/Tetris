@@ -14,7 +14,7 @@ var Score = function ( elem, addedScoreElem ) {
     let fontSizeAddedScore = +window.getComputedStyle(addedScoreElem,null).getPropertyValue("font-size").split(/[a-zA-Z]+/)[0];
 
     let init = () => {
-        this.resetScore();
+        resetScore();
     }
     let showScore = (addedScore = 0) => {
         animateScore(addedScore);
@@ -76,7 +76,7 @@ var Score = function ( elem, addedScoreElem ) {
     /**
         public function, it resets global variables which contains information about score
     */
-    this.resetScore = () => {
+    let resetScore = () => {
         score = 0;
         removedRows = 0;
         comboRows = [ 0,0,0,0,0 ];
@@ -89,17 +89,17 @@ var Score = function ( elem, addedScoreElem ) {
         public function, it computing score based on rows
         @param {int} rows how many rows player removed
     */
-    this.computeScore = ( rows = 0 ) => {
+    let computeScore = ( rows = 0 ) => {
         updateScore(rows);
     }
-    this.stopTime = () => {
+    let stopTime = () => {
         endTimer = new Date();
     }
     /**
         public function, it provides statistics to GameMenu.js
         @return {Object} last statistics, after lost game
     */
-    this.getLastStats = () => {
+    let getLastStats = () => {
         return {
             "Score":        score,
             "Rows":         removedRows,
@@ -112,5 +112,12 @@ var Score = function ( elem, addedScoreElem ) {
     }
 
     init();
+
+    return {
+        resetScore,
+        computeScore,
+        stopTime,
+        getLastStats
+    }
 
 }

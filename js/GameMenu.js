@@ -103,7 +103,7 @@ ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(
         let key;
         let val;
         Object.entries(generalStats).forEach((arr) => {
-            [key,val] = arr;
+            [key="",val=""] = arr;
             createCookie(key.toLowerCase(), val, COOKIE_EXPIRE_DAYS);
         });
         /*for (const key of Object.keys(generalStats)) {
@@ -165,7 +165,7 @@ ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(
     /**
         @param {Function} func it contains function which starts game
     */
-    this.setStartFunction = ( func = {} ) => {
+    let setStartFunction = ( func = {} ) => {
         if ( func instanceof Function )
             startGameFunc = func;
     }
@@ -173,7 +173,7 @@ ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(
         public function, it presents stats (after lost game) create table and show it in html
         @param {Object} stats it contains statistics
     */
-    this.showLastStats = ( stats ) => {
+    let showStatsAfterGame = ( stats ) => {
         let html = "<table class=\"last-stats\">";
         let tempMs = stats["Time"] || 0;
         let key;
@@ -197,4 +197,9 @@ ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(
     }
 
     init();
+
+    return {
+        setStartFunction,
+        showStatsAfterGame
+    }
 }

@@ -106,7 +106,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         Public function, draw elements on canvas
         @param {Array} array array of objects (squares)
     */
-    this.draw = ( array = [] ) => {
+    let draw = ( array = [] ) => {
         currentX = 0,
         currentY = 0;
 
@@ -131,7 +131,7 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         @param {String} colorStroke hex color of border of text
         @param {Number} fontSize size of font in px
     */
-    this.drawText = ( text = "", colorFill = "#fff", colorStroke = "#fff", fontSize = 16 ) => {
+    let drawText = ( text = "", colorFill = "#fff", colorStroke = "#fff", fontSize = 16 ) => {
         ctx.beginPath();
         ctx.font = "bold " + fontSize + "px Impact, Charcoal";
         ctx.fillStyle = colorFill;
@@ -146,13 +146,13 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
         public function, it passes dimensions of board
         @return {Array} returns dimensions of board
     */
-    this.getDimensions = () => {
+    let getDimensions = () => {
         return [sizeX,sizeY];//in this format because [x,y] = [sizeX,sizeY] (es6)
     }
     /*
         public function, Reset screen very strict
     */
-    this.fullResetScreen = () => {
+    let fullResetScreen = () => {
         let a = canvasElem.width;
         canvasElem.width = 0;
         canvasElem.width = a;
@@ -160,4 +160,11 @@ var CanvasScreen = function ( canvasElem, sizeX, sizeY ) {
     }
 
     init();
+    //public functions
+    return {
+        draw,
+        drawText,
+        getDimensions,
+        fullResetScreen
+    }
 }

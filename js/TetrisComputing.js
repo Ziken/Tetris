@@ -92,7 +92,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
     let init = () => {
         resetGame();
         window.addEventListener("keydown",workWithKeys,true); //it should be keyup, now is exposed to bugs
-        menuHandler.setStartFunction(this.start);
+        menuHandler.setStartFunction(startGame);
 
     }
     /**
@@ -157,7 +157,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
                 //TODO show reset button
                 screenHandler.drawText( "Game Over", "#00bcd4", "#082462" , 60 );
                 setTimeout(()=>{
-                    menuHandler.showLastStats( scoreHandler.getLastStats() );
+                    menuHandler.showStatsAfterGame( scoreHandler.getLastStats() );
                 }, 1000);
             }
         }
@@ -308,7 +308,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         createEmptyBoard(board, SIZE_Y, SIZE_X);
         drawOnScreen(board);
     }
-    this.start = () => {
+    let startGame = () => {
         resetGame();
         scoreHandler.resetScore();
         giveNextElem();
