@@ -7,64 +7,64 @@
  * @param {Object} buttonShowStats DOM of button which shows general statistics
 */
 var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPlay, buttonShowStats ) {
-
+    'use strict';
     let startGameFunc = () => {};
     let generalStats = {};
     const COOKIE_EXPIRE_DAYS = 30,
-          SHOW_CLASS = "show-elem";//class in css which is responsible of animate elements (opacity from 0 to 1)
+          SHOW_CLASS = 'show-elem';//class in css which is responsible of animate elements (opacity from 0 to 1)
 
-    let init = () => {
+    const init = () => {
         //set events
-        buttonPlay.addEventListener("click", startPlaying , true);
-        buttonShowStats.addEventListener("click", showStats , true);
-        statsHandler.addEventListener("click", hideStats , true);
-        lastScoreHandler.addEventListener("click", hideLastStats , true);
+        buttonPlay.addEventListener('click', startPlaying , true);
+        buttonShowStats.addEventListener('click', showStats , true);
+        statsHandler.addEventListener('click', hideStats , true);
+        lastScoreHandler.addEventListener('click', hideLastStats , true);
         //get information from cookies
-        generalStats.highScore = getCookie("highscore") || 0;
-        generalStats.rows = getCookie("rows") || 0;
-        generalStats.playingTime = +getCookie("playingtime") || 0;
-        generalStats.allPlayedTime = +getCookie("allplayedtime") || 0;
-        generalStats.lastPlayed = getCookie("lastplayed") || getFormattedDate(new Date());
+        generalStats.highScore = getCookie('highscore') || 0;
+        generalStats.rows = getCookie('rows') || 0;
+        generalStats.playingTime = +getCookie('playingtime') || 0;
+        generalStats.allPlayedTime = +getCookie('allplayedtime') || 0;
+        generalStats.lastPlayed = getCookie('lastplayed') || getFormattedDate(new Date());
 
     }
 
-    let startPlaying = () => {
+    const startPlaying = () => {
         hideMenu();
         startGameFunc();
     }
-    let addClass = ( elem , className = "" ) => {
+    const addClass = ( elem , className = '' ) => {
         if ( elem instanceof Element )
             elem.classList.add(className);
     }
-    let removeClass = ( elem, className = "" ) => {
+    const removeClass = ( elem, className = '' ) => {
         if ( elem instanceof Element )
             elem.classList.remove(className);
     }
-    let hideMenu = () => {
+    const hideMenu = () => {
         removeClass(menuHandler, SHOW_CLASS);
     }
-    let showMenu = () => {
+    const showMenu = () => {
         addClass(menuHandler, SHOW_CLASS);
     }
-    let hideStats = () => {
+    const hideStats = () => {
         removeClass(statsHandler, SHOW_CLASS);
     }
-    let showStats = () => {
+    const showStats = () => {
         showGeneralStats();
         addClass(statsHandler, SHOW_CLASS);
     }
-    let hideLastStats = () => {
+    const hideLastStats = () => {
         removeClass(lastScoreHandler, SHOW_CLASS);
     }
-    let showLastStats = () => {
+    const showLastStats = () => {
         addClass(lastScoreHandler, SHOW_CLASS);
     }
     /**
-        get formatted time like "0 h and 0 min. 43 secs"
+        get formatted time like '0 h and 0 min. 43 secs'
         @param {Number} time it contains amount of miliseconds
     */
-    let getFormattedTime = ( time = 0 ) => {
-        let formatToTime = ( t ) => {
+    const getFormattedTime = ( time = 0 ) => {
+        const formatToTime = ( t ) => {
             return (t - t % 60) / 60;
         }
         let seconds = Math.round(time/1000);
@@ -76,34 +76,34 @@ var GameMenu = function ( menuHandler, statsHandler, lastScoreHandler, buttonPla
         return `${hours} h and ${minutes} min. ${seconds} secs.`;
     }
     /**
-        get formatted date like "08.06.2017 20:10:24"
+        get formatted date like '08.06.2017 20:10:24'
         @param {Object} time it contains infomation about date (object new Date())
     */
-    let getFormattedDate = ( date = new Date() ) => {
-        let addLeadZero = ( num ) => {
-            return (num < 10?"0"+num:num);
+    const getFormattedDate = ( date = new Date() ) => {
+        const addLeadZero = ( num ) => {
+            return (num < 10?'0'+num:num);
         }
         return `${addLeadZero(date.getDate())}.${addLeadZero(date.getMonth())}.${date.getFullYear()}
 ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(date.getSeconds())}`
-        /*let strDate = addLeadZero(date.getDate()) + "." + addLeadZero(date.getMonth()) + "." + date.getFullYear() + " ";
-        strDate += addLeadZero(date.getHours()) + ":" + addLeadZero(date.getMinutes()) + ":" + addLeadZero(date.getSeconds());
+        /*let strDate = addLeadZero(date.getDate()) + '.' + addLeadZero(date.getMonth()) + '.' + date.getFullYear() + ' ';
+        strDate += addLeadZero(date.getHours()) + ':' + addLeadZero(date.getMinutes()) + ':' + addLeadZero(date.getSeconds());
         return strDate;*/
     }
 
-    let updateGeneralStats = ( stats = {} ) => {
+    const updateGeneralStats = ( stats = {} ) => {
         // if last score is higher, set new general score
-        if ( stats["Score"] && stats["Score"] > generalStats.highScore ) {
-            generalStats.highScore = stats["Score"];
-            generalStats.rows = stats["Rows"] || 0;
-            generalStats.playingTime = +stats["Time"] || 0;
+        if ( stats['Score'] && stats['Score'] > generalStats.highScore ) {
+            generalStats.highScore = stats['Score'];
+            generalStats.rows = stats['Rows'] || 0;
+            generalStats.playingTime = +stats['Time'] || 0;
         }
-        generalStats.allPlayedTime += +stats["Time"] || 0;
+        generalStats.allPlayedTime += +stats['Time'] || 0;
         generalStats.lastPlayed = getFormattedDate(new Date());
 
         let key;
         let val;
         Object.entries(generalStats).forEach((arr) => {
-            [key="",val=""] = arr;
+            [key='',val=''] = arr;
             createCookie(key.toLowerCase(), val, COOKIE_EXPIRE_DAYS);
         });
         /*for (const key of Object.keys(generalStats)) {
@@ -116,7 +116,7 @@ ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(
         @param {String} value second cell of row
         @return {String} row of table with values
     */
-    let createRowTable = ( name="", value="" ) => {
+    const createRowTable = ( name='', value='' ) => {
         return `
 <tr>
     <td>${name}: </td>
@@ -124,19 +124,19 @@ ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(
 </tr>`;
     }
 
-    let createCookie = ( name="",value="",days= -1 ) => {
-        let expires = "";
+    const createCookie = ( name='',value='',days= -1 ) => {
+        let expires = '';
         if ( days ) {
             let date = new Date();
             date.setTime( date.getTime() + (days*24*60*60*1000) );
-            expires = "; expires=" + date.toGMTString();
+            expires = '; expires=' + date.toGMTString();
         }
-        document.cookie = name + "=" + value + expires + "; path=/";
+        document.cookie = name + '=' + value + expires + '; path=/';
     }
 
-    let getCookie = ( name = "" ) => {
-        let nameEQ = name + "=";
-        let ca = document.cookie.split(';');
+    const getCookie = ( name = '' ) => {
+        let nameEQ = name + '=';
+        const ca = document.cookie.split(';');
         for (let i = 0;i < ca.length; i++) {
             let c = ca[i];
             while (c.charAt(0)==' ') c = c.substring(1,c.length);
@@ -146,26 +146,26 @@ ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(
     }
 
     /*let eraseCookie = ( name ) => {
-        createCookie(name,"",-1);
+        createCookie(name,'',-1);
     }*/
 
     /**
         Create table of information which contains general stats and show it in html
     */
-    let showGeneralStats = () => {
-        let html = "<table class=\"general-stats\">";
-        html += createRowTable("High score", generalStats["highScore"]);
-        html += createRowTable("then you removed rows", generalStats["rows"]);
-        html += createRowTable("then game last", getFormattedTime(generalStats["playingTime"]));
-        html += createRowTable("You've already played for", getFormattedTime(generalStats["allPlayedTime"]));
-        html += createRowTable("Your last game was at", generalStats["lastPlayed"]);
-        html += "</table>";
+    const showGeneralStats = () => {
+        let html = '<table class="general-stats">';
+        html += createRowTable('High score', generalStats['highScore']);
+        html += createRowTable('then you removed rows', generalStats['rows']);
+        html += createRowTable('then game last', getFormattedTime(generalStats['playingTime']));
+        html += createRowTable('You\'ve already played for', getFormattedTime(generalStats['allPlayedTime']));
+        html += createRowTable('Your last game was at', generalStats['lastPlayed']);
+        html += '</table>';
         statsHandler.innerHTML = html;
     }
     /**
         @param {Function} func it contains function which starts game
     */
-    let setStartFunction = ( func = {} ) => {
+    const setStartFunction = ( func = {} ) => {
         if ( func instanceof Function )
             startGameFunc = func;
     }
@@ -173,24 +173,24 @@ ${addLeadZero(date.getHours())}:${addLeadZero(date.getMinutes())}:${addLeadZero(
         public function, it presents stats (after lost game) create table and show it in html
         @param {Object} stats it contains statistics
     */
-    let showStatsAfterGame = ( stats ) => {
-        let html = "<table class=\"last-stats\">";
-        let tempMs = stats["Time"] || 0;
+    const showStatsAfterGame = ( stats ) => {
+        let html = '<table class="last-stats">';
+        let tempMs = stats['Time'] || 0;
         let key;
         let val;
-        stats["Time"] = getFormattedTime(stats["Time"]);
+        stats['Time'] = getFormattedTime(stats['Time']);
 
         /*for (const key of Object.keys(stats)) {
             html += createRowTable(key, stats[key]);
         }*/
         Object.entries(stats).forEach((arr) => {
-            [key="",val=""] = arr;
+            [key='',val=''] = arr;
             html += createRowTable(key, val);
         })
-        html += "</table>";
+        html += '</table>';
         lastScoreHandler.innerHTML = html;
 
-        stats["Time"] = tempMs;
+        stats['Time'] = tempMs;
         showMenu();
         showLastStats();
         updateGeneralStats(stats);

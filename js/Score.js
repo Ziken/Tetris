@@ -5,44 +5,44 @@
     @param {Object} addedScoreElem DOM element, it shows score what player just got
 */
 var Score = function ( elem, addedScoreElem ) {
-    "use strict";
+    'use strict';
     let score = 0;
     let removedRows = 0;
     let startTimer;// time when player starts game
     let endTimer;// time when player ends game
     let comboRows = [ 0,0,0,0,0 ];
-    let fontSizeAddedScore = +window.getComputedStyle(addedScoreElem,null).getPropertyValue("font-size").split(/[a-zA-Z]+/)[0];
+    let fontSizeAddedScore = +window.getComputedStyle(addedScoreElem,null).getPropertyValue('font-size').split(/[a-zA-Z]+/)[0];
 
-    let init = () => {
+    const init = () => {
         resetScore();
     }
-    let showScore = (addedScore = 0) => {
+    const showScore = (addedScore = 0) => {
         animateScore(addedScore);
-        addedScoreElem.innerHTML = "+" + addedScore;
-        addedScoreElem.style.fontSize = fontSizeAddedScore + 2 * addedScore / 100  + "px";
+        addedScoreElem.innerHTML = '+' + addedScore;
+        addedScoreElem.style.fontSize = fontSizeAddedScore + 2 * addedScore / 100  + 'px';
     }
     /**
         very simply animation of score
         @param {Number} addedScore amount points which player just got
     */
-    let animateScore = (addedScore = 0) => {
-        addedScoreElem.style.display = "block";//show element which presents amount of points which player got
+    const animateScore = (addedScore = 0) => {
+        addedScoreElem.style.display = 'block';//show element which presents amount of points which player got
 
         let scoreBegin = score;
         let increase = addedScore/100;
         score += addedScore;
         //animation
-        let anim = () => {
+        const anim = () => {
             scoreBegin += increase;
-            let scoreLen = ("" + scoreBegin).length;
-            let finalScore = "";
-            for (let i = scoreLen; i < 9; i++) finalScore += "0"; //add leading 0
+            let scoreLen = ('' + scoreBegin).length;
+            let finalScore = '';
+            for (let i = scoreLen; i < 9; i++) finalScore += '0'; //add leading 0
             finalScore += scoreBegin;
             elem.innerHTML = finalScore;
             if ( scoreBegin < score ) {
                 window.requestAnimationFrame(anim);
             } else {
-                addedScoreElem.style.display = "none"; // hide
+                addedScoreElem.style.display = 'none'; // hide
             }
         }
         anim();
@@ -51,24 +51,30 @@ var Score = function ( elem, addedScoreElem ) {
         give points to player according to amount of rows
         @param {Number} rows amount of removed rows by player
     */
-    let updateScore = ( rows = 0 ) => {
+    const updateScore = ( rows = 0 ) => {
         let addedScore = 0;
         comboRows[rows]++;
+        // no-case-declarations.
         switch (rows) {
-            case 1:
+            case 1: {
                 addedScore+=100;
                 break;
-            case 2:
+            }
+            case 2: {
                 addedScore+=200;
                 break;
-            case 3:
+            }
+            case 3: {
                 addedScore+=400;
                 break;
-            case 4:
+            }
+            case 4: {
                 addedScore+=800;
                 break;
-            default:
+            }
+            default: {
                 return false;
+            }
         }
         removedRows += rows;
         showScore(addedScore);
@@ -76,12 +82,12 @@ var Score = function ( elem, addedScoreElem ) {
     /**
         public function, it resets global variables which contains information about score
     */
-    let resetScore = () => {
+    const resetScore = () => {
         score = 0;
         removedRows = 0;
         comboRows = [ 0,0,0,0,0 ];
-        addedScoreElem.innerHTML = "";
-        elem.innerHTML = "000000000";
+        addedScoreElem.innerHTML = '';
+        elem.innerHTML = '000000000';
         startTimer = new Date();
         endTimer = startTimer;
     }
@@ -89,25 +95,25 @@ var Score = function ( elem, addedScoreElem ) {
         public function, it computing score based on rows
         @param {int} rows how many rows player removed
     */
-    let computeScore = ( rows = 0 ) => {
+    const computeScore = ( rows = 0 ) => {
         updateScore(rows);
     }
-    let stopTime = () => {
+    const stopTime = () => {
         endTimer = new Date();
     }
     /**
         public function, it provides statistics to GameMenu.js
         @return {Object} last statistics, after lost game
     */
-    let getLastStats = () => {
+    const getLastStats = () => {
         return {
-            "Score":        score,
-            "Rows":         removedRows,
-            "Combo 1 row":  comboRows[1],
-            "Combo 2 rows": comboRows[2],
-            "Combo 3 rows": comboRows[3],
-            "Combo 4 rows": comboRows[4],
-            "Time": endTimer - startTimer
+            'Score':        score,
+            'Rows':         removedRows,
+            'Combo 1 row':  comboRows[1],
+            'Combo 2 rows': comboRows[2],
+            'Combo 3 rows': comboRows[3],
+            'Combo 4 rows': comboRows[4],
+            'Time': endTimer - startTimer
         };
     }
 
