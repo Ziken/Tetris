@@ -137,6 +137,7 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
         drawOnScreen( cpBoard );
     }
     const endGame = () => {
+        refreshScreen();
         currentElem = ELEMENTS['empty'];
         currentElemColor = '#134bc6';
         disableMoving = true;
@@ -161,7 +162,8 @@ var TetrisComputing = function ( screenHandler, nextItemScreen, scoreHandler, me
                 }, 1000);
             }
         }
-        fillBoard();
+        setTimeout(fillBoard, 1000);
+
     }
     const getRandomElem = () => {
         let e = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];

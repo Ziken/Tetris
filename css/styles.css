@@ -89,6 +89,18 @@
     text-align: left;
     display: none;
 }
+.stats:after {
+    content: 'Click to close';
+    display: block;
+    text-transform: uppercase;
+    font-weight: bold;
+    width: 100%;
+    background-image: linear-gradient(to right,transparent -20% ,#fff 50%,transparent 120%);
+    text-align: center;
+    border-radius: 2px;
+    margin-top: -10px;
+    animation: show-elem 1s infinite;
+}
 .last-stats, .general-stats {
     width: 100%;
     height: 100%;
